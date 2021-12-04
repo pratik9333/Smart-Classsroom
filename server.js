@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require("path");
+
 const app = express();
 
 const authroutes = require("./api/auth.route");
@@ -8,7 +10,7 @@ const sequelize = require("./config/db");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-TODO: app.use("/public/image", express.static("public/image"));
+app.use(express.static(path.join(__dirname,"..","public")));
 
 //Routes
 app.use("/api", authroutes);

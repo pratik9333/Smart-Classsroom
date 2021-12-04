@@ -22,6 +22,8 @@
   "homepage": "https://github.com/pratik9333/Smart-Classsroom#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.12.0-alpha.1"
   },
   "devDependencies": {

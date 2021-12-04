@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 //Server connection
 const port = process.env.PORT || 5000; // PORT
 
-
+// syncing the models with the database and server running
 sequelize.sync().then(result=>{
   app.listen(port, () => {
     console.log(`app is runnning at ${port}`);

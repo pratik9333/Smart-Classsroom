@@ -1,4 +1,5 @@
 const express = require("express");
+const sequelize = require("./db");
 const app = express();
 
 //Middleware
@@ -7,10 +8,15 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routes
 
-//DB Connection
+
 
 //Server connection
 const port = process.env.PORT || 5000; // PORT
-app.listen(port, () => {
-  console.log(`app is runnning at ${port}`);
-});
+
+
+sequelize.sync().then(result=>{
+  app.listen(port, () => {
+    console.log(`app is runnning at ${port}`);
+  });
+})
+

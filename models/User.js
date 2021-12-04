@@ -1,8 +1,21 @@
-const { DataTypes } = require("sequelize");
+const crypto = require("crypto");
+
+const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-const User = sequelize.define(
-  "User",
+class User extends Model {
+
+  // utility fn to validate password
+  validatePassword(inputPassword) {
+    let hash = crypto.pbkdf2Sync(inputPassword,
+      this.salt, 1000, 64, `sha512`).toString(`hex`);
+    return this.password === hash;
+  }
+
+}
+
+// defining the User Schema
+User.init(
   {
     fullname: {
       type: DataTypes.STRING,
@@ -40,10 +53,25 @@ const User = sequelize.define(
 
     profile: {
       type: DataTypes.STRING,
-      default: "/public/image/defaultimage.jpeg",
+      defaultValue: "/public/image/defaultimage.jpeg",
     },
+    salt: {
+      type: DataTypes.STRING
+    }
   },
-  { timestamps: true }
+  { timestamps: true, sequelize }
 );
 
+// before create , hash the password
+User.beforeCreate((user, options) => {
+   // generate a unique secret 
+   user.salt = crypto.randomBytes(16).toString('hex');
+   // Hashing user's salt and password with 1000 iterations, 
+   user.password = crypto.pbkdf2Sync(user.password, user.salt,
+     1000, 64, `sha512`).toString(`hex`);
+});
+
+
+
+// exporting User model
 module.exports = User;

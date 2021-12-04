@@ -1,0 +1,29 @@
+{
+  "name": "smart-classsroom",
+  "version": "1.0.0",
+  "description": "Smart Classroom",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pratik9333/Smart-Classsroom.git"
+  },
+  "keywords": [
+    "nodejs",
+    "react"
+  ],
+  "author": "Pratik & Raghav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pratik9333/Smart-Classsroom/issues"
+  },
+  "homepage": "https://github.com/pratik9333/Smart-Classsroom#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

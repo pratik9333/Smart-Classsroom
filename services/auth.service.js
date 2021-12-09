@@ -41,7 +41,7 @@ exports.signin = (req, res) => {
 
     if (!user.validatePassword(password)) {
       return res.status(401).json({
-        error: "Email and password does not match",
+        error: "password does not match",
       });
     }
 

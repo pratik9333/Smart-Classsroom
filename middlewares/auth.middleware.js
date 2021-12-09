@@ -1,22 +1,17 @@
 require("dotenv").config({ path: __dirname + "./config/.env" });
 
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-exports.isAuth = (req,res,next) =>{
+exports.isAuth = (req, res, next) => {
+  try {
+    const token = req.header("Authorization").split(" ")[1];
 
-    try{
+    const decodedPayload = jwt.verify(token, process.env.SECRET);
 
-        const token = req.header('Authorization').split(' ')[1];
+    req.userId = decodedPayload._id;
 
-        const decodedPayload = jwt.verify(token,process.env.SECRET);
-
-        req.userId = decodedPayload._id;
-
-        next();
-
-    }catch(err){
-
-        return res.status(400).json({message:'UnAuthorized Access'});
-    }
-
-}
+    next();
+  } catch (err) {
+    return res.status(400).json({ message: "UnAuthorized Access" });
+  }
+};

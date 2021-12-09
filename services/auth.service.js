@@ -46,7 +46,9 @@ exports.signin = (req, res) => {
     }
 
     // CREATE TOKEN
-    const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+    const token = jwt.sign({ _id: user.id }, process.env.SECRET,{
+      expiresIn: 36000
+    });
 
     const {
       id,

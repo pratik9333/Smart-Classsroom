@@ -6,7 +6,10 @@ const app = express();
 //serve images statically
 app.use('/static', express.static(path.join(__dirname, 'public')))
 
-const authroutes = require("./api/auth.route");
+// routes
+const authRoutes = require("./api/auth.route");
+const userRoutes = require("./api/user.route");
+
 const sequelize = require("./config/db");
 
 //Middleware
@@ -14,9 +17,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-
 //Routes
-app.use("/api", authroutes);
+app.use("/api", authRoutes);
+app.use("/user",userRoutes);
 
 //Server connection
 const port = process.env.PORT || 8000; // PORT

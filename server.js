@@ -3,6 +3,9 @@ const path = require("path");
 
 const app = express();
 
+//serve images statically
+app.use('/static', express.static(path.join(__dirname, 'public')))
+
 const authroutes = require("./api/auth.route");
 const sequelize = require("./config/db");
 
@@ -10,13 +13,13 @@ const sequelize = require("./config/db");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname,"..","public")));
+
 
 //Routes
 app.use("/api", authroutes);
 
 //Server connection
-const port = process.env.PORT || 6000; // PORT
+const port = process.env.PORT || 8000; // PORT
 
 // syncing the models with the database and server running
 sequelize.sync().then((result) => {

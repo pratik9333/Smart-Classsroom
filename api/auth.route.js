@@ -4,6 +4,12 @@ const { check } = require("express-validator");
 const { signup, signin } = require("../services/auth.service");
 
 //Routes
+
+/**
+ * @route POST /api/signup
+ * @visibility public
+ * 
+ */
 router.post(
   "/signup",
   [
@@ -24,6 +30,11 @@ router.post(
   signup
 );
 
+/**
+ * @route POST /api/signin
+ * @visibility public
+ * 
+ */
 router.post(
   "/signin",
   [

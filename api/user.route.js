@@ -1,7 +1,15 @@
 const router = require("express").Router();
 const { check } = require("express-validator");
-const { isAuth } = require("../middlewares/auth.middleware");
+
+/**
+ * @route GET /user/:Id
+ * @visibility protected
+ * 
+ */
+// get the user by id 
 
 
 
+
+// 
 module.exports = router;

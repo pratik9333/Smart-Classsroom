@@ -1,15 +1,21 @@
 const router = require("express").Router();
-const { check } = require("express-validator");
+
+const { isAuth } = require("../middlewares/auth.middleware");
+
+const { getProfile, updateProfile } = require("../services/user.service");
 
 /**
- * @route GET /user/:Id
+ * @route GET /profile/
  * @visibility protected
- * 
+ *
  */
-// get the user by id 
+router.get("/user/profile", isAuth, getProfile);
 
+/**
+ * @route PUT /profile/
+ * @visibility protected
+ *
+ */
+router.put("/user/profile", isAuth, updateProfile);
 
-
-
-// 
 module.exports = router;

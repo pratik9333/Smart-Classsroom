@@ -9,7 +9,7 @@ const Question = sequelize.define("question", {
   description: {
     type: DataTypes.STRING(200),
     allowNull: true,
-  },
+  }
 });
 
 module.exports = Question;

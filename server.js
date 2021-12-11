@@ -25,7 +25,7 @@ app.use("/api", userRoutes);
 const port = process.env.PORT || 8000; // PORT
 
 //multer setting
-exports.storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./public/images");
   },

@@ -1,5 +1,5 @@
-const multer = require("multer");
-const path = require("path");
+// const multer = require("multer");
+// const path = require("path");
 require("dotenv").config({ path: __dirname + "./config/.env" });
 const User = require("../models/user.model");
 const { storage } = require("../server");

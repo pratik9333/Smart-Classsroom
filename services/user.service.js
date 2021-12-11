@@ -2,14 +2,13 @@
 // const path = require("path");
 require("dotenv").config({ path: __dirname + "./config/.env" });
 const User = require("../models/user.model");
-const { storage } = require("../server");
 
 //get profile
 exports.getProfile = (req, res) => {
   User.findOne({ where: { id: req.userId } })
     .then((user) => {
       if (!user) {
-        return res.json({ failed: "Failed to get profile details" });
+        return res.json({ error: "Failed to get profile details" });
       } else {
         const {
           fullname,
@@ -37,13 +36,13 @@ exports.getProfile = (req, res) => {
       }
     })
     .catch((err) => {
-      res.json({ error: err });
+      res.json({ error: "Not able to get profile" });
     });
 };
 
 //update profile
 exports.updateProfile = (req, res, next) => {
-  updateprofile = {};
+  const updateprofile = {};
 
   if (req.body.fullname) updateprofile.fullname = req.body.fullname;
   if (req.body.email) updateprofile.email = req.body.email;
@@ -52,6 +51,7 @@ exports.updateProfile = (req, res, next) => {
   if (req.body.classname) updateprofile.classname = req.body.classname;
   if (req.body.gender) updateprofile.gender = req.body.gender;
   if (req.body.role) updateprofile.role = req.body.role;
+  if (req.file) updateprofile.profile = req.file.path;
 
   User.findOne({ where: { id: req.userId } }).then((user) => {
     if (!user) {
@@ -63,7 +63,7 @@ exports.updateProfile = (req, res, next) => {
           return res.json({ success: "user profile updated!" });
         })
         .catch((err) => {
-          return res.json({ err: err });
+          return res.json({ error: "Not able to update profile" });
         });
     }
   });

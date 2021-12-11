@@ -60,7 +60,7 @@ User.init(
 
     profile: {
       type: DataTypes.STRING,
-      defaultValue: "/public/image/defaultimage.jpeg",
+      defaultValue: "/public/images/defaultimage.jpeg",
     },
     salt: {
       type: DataTypes.STRING,

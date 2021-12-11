@@ -41,40 +41,15 @@ exports.signin = (req, res) => {
 
     if (!user.validatePassword(password)) {
       return res.status(401).json({
-        error: "Email and password does not match",
+        error: "password does not match",
       });
     }
 
     // CREATE TOKEN
-    const token = jwt.sign({ _id: user.id }, process.env.SECRET,{
-      expiresIn: 36000
+    const token = jwt.sign({ _id: user.id }, process.env.SECRET, {
+      expiresIn: 36000,
     });
 
-    const {
-      id,
-      fullname,
-      profile,
-      email,
-      classname,
-      rollno,
-      gender,
-      dob,
-      role,
-    } = user;
-
-    res.json({
-      token,
-      user: {
-        id,
-        fullname,
-        email,
-        profile,
-        classname,
-        rollno,
-        gender,
-        dob,
-        role,
-      },
-    });
+    res.json({ success: "signin success", token: { token } });
   });
 };

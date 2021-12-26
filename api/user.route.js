@@ -9,13 +9,17 @@ const { getProfile, updateProfile } = require("../services/user.service");
  * @visibility protected
  *
  */
-router.get("/user/profile", isAuth, getProfile);
+router.get("/profile", isAuth, getProfile);
 
 /**
  * @route PUT /profile/
  * @visibility protected
  *
  */
-router.put("/user/profile", isAuth, updateProfile);
+router.put("/profile", isAuth, updateProfile);
+
+
+
+
 
 module.exports = router;

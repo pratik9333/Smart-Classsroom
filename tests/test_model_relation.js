@@ -22,7 +22,9 @@ User.hasMany(Answer)
 Question.belongsToMany(Tag,{through: 'QuestionTag'});
 
 
-sequelize.sync({ force: true }).then((result) => {})
+sequelize.sync({ force: true }).then((result) => {
+    console.log(result);
+})
     // user and question
     // User.create({
     //     "fullname" : "demo user",

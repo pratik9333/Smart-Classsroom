@@ -8,6 +8,7 @@ const { storage } = require("./middlewares/upload.middleware");
 
 // db models
 const sequelize = require("./config/db");
+
 const User = require("./models/user.model");
 const Question = require("./models/question.model");
 const Answer = require("./models/answer.model");
@@ -30,8 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(multer({ storage: storage }).single("profile"));
 
 //Routes
-app.use("/api", authRoutes);
-app.use("/api", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/post", userRoutes);
 
 
 // model relations

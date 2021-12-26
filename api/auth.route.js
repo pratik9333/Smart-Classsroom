@@ -6,7 +6,7 @@ const { signup, signin } = require("../services/auth.service");
 //Routes
 
 /**
- * @route POST /api/signup
+ * @route POST /api/auth/signup
  * @visibility public
  * 
  */
@@ -31,7 +31,7 @@ router.post(
 );
 
 /**
- * @route POST /api/signin
+ * @route POST /api/auth/signin
  * @visibility public
  * 
  */

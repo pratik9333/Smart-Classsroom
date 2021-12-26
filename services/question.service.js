@@ -76,7 +76,7 @@ exports.editQuestion = (req, res, next) => {};
 
 exports.deleteQuestion = (req, res, next) => {};
 
-exports.searchQuestionsByTags = (req, res, next) => {
+exports.searchQuestionsByTags = async (req, res, next) => {
   //  questions/?filterTags=tag1,tag2
   let filterTags = req.query.filterTags;
 
@@ -86,24 +86,23 @@ exports.searchQuestionsByTags = (req, res, next) => {
     // filterTags= ['tag1','tag2']
     filterTags = filterTags.split(",");
 
-    filterTags.forEach((tagName) => {
+    for (const tagName of filterTags) {
       if (tagName !== "") {
         const tag = await Tag.findOne({ where: { name: tagName } });
-
+        let questions = [];
         if (tag) {
-          const questions =
-            tag.countQuestions() > 0
-              ? tag.getQuestions().map((question) => ({
-                  id: question.id,
-                  heading: question.heading,
-                  description: question.description,
-                }))
-              : [];
-
+          const numQuestions = await tag.countQuestions();
+          if (numQuestions > 0) {
+            questions = await tag.getQuestions().map((question) => ({
+              id: question.id,
+              heading: question.heading,
+              description: question.description,
+            }));
+          }
           filteredQuestions[tagName] = questions;
         }
       }
-    });
+    }
 
     return res.status(200).json({
       filteredQuestions,

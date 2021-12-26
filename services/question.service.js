@@ -82,8 +82,7 @@ exports.searchQuestionsByTags = async (req, res, next) => {
 
   const filteredQuestions = {};
 
-  if (filterTags && filterTags.trim().length() > 0) {
-    // filterTags= ['tag1','tag2']
+  if (filterTags && filterTags.trim().length > 0) {
     filterTags = filterTags.split(",");
 
     for (const tagName of filterTags) {
@@ -93,7 +92,8 @@ exports.searchQuestionsByTags = async (req, res, next) => {
         if (tag) {
           const numQuestions = await tag.countQuestions();
           if (numQuestions > 0) {
-            questions = await tag.getQuestions().map((question) => ({
+            questions = await tag.getQuestions();
+            questions = questions.map((question) => ({
               id: question.id,
               heading: question.heading,
               description: question.description,

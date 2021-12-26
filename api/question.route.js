@@ -6,14 +6,14 @@ const {
   createQuestion,
   editQuestion,
   deleteQuestion,
-  searchQuestionsByTag,
+  searchQuestionsByTags,
   getRecentQuestions,
 } = require("../services/question.service");
 
 const { isAuth } = require("../middlewares/auth.middleware");
 
 // search questions by tag
-router.get("/questions", searchQuestionsByTag);
+router.get("/questions", searchQuestionsByTags);
 
 // get recent questions
 router.get("/questions", getRecentQuestions);

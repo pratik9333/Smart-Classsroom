@@ -1,9 +1,41 @@
 const { validationResult } = require("express-validator");
 
-const Question = require("../models/question.model");
+const User = require("../models/user.model");
 const Tag = require("../models/tag.model");
+const Question = require("../models/question.model");
 
-exports.getAQuestion = (req, res, next) => {};
+exports.getPost = async (req, res, next) => {
+  const id = req.params.id;
+
+  const question = await Question.findByPk(id);
+
+  if (!question) {
+    return res.status(400).json({ error: "Cannot able to find question" });
+  } else {
+    const answers = await question.getAnswers();
+    const tags = await question.getTags();
+
+    const postObj = {
+      heading: question.heading,
+      description: question.description,
+      answers: answers
+        ? answers.map((answer) => ({
+            id: answer.id,
+            description: answer.description,
+          }))
+        : [],
+
+      tags: tags
+        ? tags.map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+          }))
+        : [],
+    };
+
+    return res.status(200).json({ post: postObj });
+  }
+};
 
 exports.createQuestion = async (req, res, next) => {
   const errors = validationResult(req);
@@ -16,21 +48,27 @@ exports.createQuestion = async (req, res, next) => {
 
   const { heading, description, tags } = req.body;
 
-  const question = await Question.create({
-    heading,
-    description,
-  });
-  const isSuccess = await _createRelatedTagsIfNotExists(question, tags);
+  const user = await User.findOne({ where: { id: req.userId } });
 
-  if (isSuccess) {
-    return res.status(201).json({
-      id: question.id,
-      message: "question created",
-    });
+  if (!user) {
+    return res.status(400).json({ error: "No Such User" });
   } else {
-    return res.status(500).json({
-      error: "Some error occured",
+    const question = await user.createQuestion({
+      heading,
+      description,
     });
+    const isSuccess = await _createRelatedTagsIfNotExists(question, tags);
+
+    if (isSuccess) {
+      return res.status(201).json({
+        id: question.id,
+        message: "question created",
+      });
+    } else {
+      return res.status(500).json({
+        error: "Some error occured",
+      });
+    }
   }
 };
 
@@ -42,22 +80,20 @@ exports.searchQuestionsByTag = (req, res, next) => {};
 
 exports.getRecentQuestions = (req, res, next) => {};
 
-
-
-
-_createRelatedTagsIfNotExists = async (question, tags) => {
+//private function to create tag / add tag
+_createRelatedTagsIfNotExists = (question, tags) => {
   // check if the tag with that name exists or not.
   try {
-    tags.forEach((tag) => {
-      if (tag !== "") {
-        const tag = await Tag.findOne({ where: { name: tag } });
+    tags.forEach(async (tagName) => {
+      if (tagName !== "") {
+        const tag = await Tag.findOne({ where: { name: tagName } });
 
         // if tag is not present, then create
         if (!tag) {
-          await question.createTag({ name: tag });
+          await question.createTag({ name: tagName });
         } else {
           // if present, then link to that question
-         await question.addTag(tag);
+          await question.addTag(tag);
         }
       }
     });

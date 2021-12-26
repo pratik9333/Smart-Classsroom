@@ -53,15 +53,16 @@ exports.updateProfile = (req, res, next) => {
 
   User.findOne({ where: { id: req.userId } }).then((user) => {
     if (!user) {
-      return res.json({ error: "No User Found" });
+      return res.status(400).json({ error: "No User Found" });
     } else {
       user
         .update(updateprofile)
         .then((user) => {
-          return res.json({ success: "user profile updated!" });
+          return res.status(200).json({ success: "user profile updated!" });
         })
         .catch((err) => {
-          return res.json({ error: "Not able to update profile" });
+          console.log(err);
+          return res.status(500).json({ error: "Not able to update profile" });
         });
     }
   });

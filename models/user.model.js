@@ -38,7 +38,7 @@ User.init(
     },
 
     dob: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
     },
 
     classname: {

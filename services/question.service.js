@@ -76,11 +76,45 @@ exports.editQuestion = (req, res, next) => {};
 
 exports.deleteQuestion = (req, res, next) => {};
 
-exports.searchQuestionsByTag = (req, res, next) => {};
+exports.searchQuestionsByTags = (req, res, next) => {
+  //  questions/?filterTags=tag1,tag2
+  let filterTags = req.query.filterTags;
+
+  const filteredQuestions = {};
+
+  if (filterTags && filterTags.trim().length() > 0) {
+    // filterTags= ['tag1','tag2']
+    filterTags = filterTags.split(",");
+
+    filterTags.forEach((tagName) => {
+      if (tagName !== "") {
+        const tag = await Tag.findOne({ where: { name: tagName } });
+
+        if (tag) {
+          const questions =
+            tag.countQuestions() > 0
+              ? tag.getQuestions().map((question) => ({
+                  id: question.id,
+                  heading: question.heading,
+                  description: question.description,
+                }))
+              : [];
+
+          filteredQuestions[tagName] = questions;
+        }
+      }
+    });
+
+    return res.status(200).json({
+      filteredQuestions,
+    });
+  }
+};
 
 exports.getRecentQuestions = (req, res, next) => {};
 
 //private function to create tag / add tag
+
 _createRelatedTagsIfNotExists = (question, tags) => {
   // check if the tag with that name exists or not.
   try {

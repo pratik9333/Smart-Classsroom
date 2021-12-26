@@ -38,6 +38,8 @@ app.use("/api/post", questionRoutes);
 
 // M:M Question and Tag
 Question.belongsToMany(Tag, { through: "QuestionTag" });
+Tag.belongsToMany(Question, { through: "QuestionTag" });
+
 
 // Tagid | QUestionId
 

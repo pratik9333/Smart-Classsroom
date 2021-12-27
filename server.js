@@ -1,6 +1,8 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
+const { Client } = require("@elastic/elasticsearch");
+const config = require("config");
 
 const app = express();
 
@@ -40,7 +42,6 @@ app.use("/api/post", questionRoutes);
 Question.belongsToMany(Tag, { through: "QuestionTag" });
 Tag.belongsToMany(Question, { through: "QuestionTag" });
 
-
 // Tagid | QUestionId
 
 // 1:M Question and Answer
@@ -64,3 +65,18 @@ sequelize.sync().then((result) => {
     console.log(`app is runnning at ${port}`);
   });
 });
+
+const client = new Client({
+  cloud: {
+    id: "Smart_Classroom:YXNpYS1zb3V0aDEuZ2NwLmVsYXN0aWMtY2xvdWQuY29tJDRkNWY3ZDk0YzBmYjQyN2E4ZTJjMzRjZWRhMTk1MTM0JGU0MGE0ZmFiNDE0YzQxNDI5OWRiMWJkNTYxNjQzOTI0",
+  },
+  auth: {
+    username: "elastic",
+    password: "oqijCMHzl10MaWS1KxisNv7h",
+  },
+});
+
+client
+  .info()
+  .then((response) => console.log(response))
+  .catch((error) => console.error(error));

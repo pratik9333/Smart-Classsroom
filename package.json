@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/pratik9333/Smart-Classsroom#readme",
   "dependencies": {
+    "@elastic/elasticsearch": "^7.16.0",
+    "config": "^3.3.6",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",

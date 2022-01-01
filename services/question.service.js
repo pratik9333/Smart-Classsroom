@@ -5,36 +5,18 @@ const Tag = require("../models/tag.model");
 const Question = require("../models/question.model");
 const client = require("../config/elastic");
 
-exports.getPost = async (req, res, next) => {
-  const id = req.params.id;
+exports.getPost = async (req, res) => {
+  try {
+    const id = req.params.id;
 
-  const question = await Question.findByPk(id);
+    const postObj = await client.get({
+      index: "smart-classroom",
+      id,
+    });
 
-  if (!question) {
-    return res.status(400).json({ error: "Cannot able to find question" });
-  } else {
-    const answers = await question.getAnswers();
-    const tags = await question.getTags();
-
-    const postObj = {
-      heading: question.heading,
-      description: question.description,
-      answers: answers
-        ? answers.map((answer) => ({
-            id: answer.id,
-            description: answer.description,
-          }))
-        : [],
-
-      tags: tags
-        ? tags.map((tag) => ({
-            id: tag.id,
-            name: tag.name,
-          }))
-        : [],
-    };
-
-    return res.status(200).json({ post: postObj });
+    return res.status(200).json({ post: postObj.body._source });
+  } catch (error) {
+    res.status(400).json({ error: "No Post Found" });
   }
 };
 
@@ -60,13 +42,12 @@ exports.createQuestion = async (req, res, next) => {
     });
     const isSuccess = await _createRelatedTagsIfNotExists(question, tags);
     if (isSuccess) {
-      const x = await client.index({
+      await client.index({
         index: "smart-classroom",
         id: question.id,
         body: req.body,
       });
       await client.indices.refresh({ index: "smart-classroom" });
-      console.log(x);
 
       return res.status(201).json({
         id: question.id,
@@ -88,8 +69,7 @@ exports.editQuestion = async (req, res, next) => {
   const checkquestion = await user.hasQuestion(question);
 
   if (checkquestion && question) {
-    const result = await question.update(req.body);
-    console.log(result);
+    await question.update(req.body);
     await client.update({
       index: "smart-classroom",
       id,
@@ -123,40 +103,25 @@ exports.deleteQuestion = async (req, res, next) => {
 };
 
 exports.searchQuestionsByTags = async (req, res, next) => {
-
-  if(!('filterTags' in req.query))
-      next();
-      
-  //  questions/?filterTags=tag1,tag2
-  const filterTags = req.query.filterTags;
-
-  const filteredQuestions = {};
-
-  if (filterTags && filterTags.trim().length > 0) {
-    filterTags = filterTags.split(",");
-
-    for (const tagName of filterTags) {
-      if (tagName !== "") {
-        const tag = await Tag.findOne({ where: { name: tagName } });
-        let questions = [];
-        if (tag) {
-          const numQuestions = await tag.countQuestions();
-          if (numQuestions > 0) {
-            questions = await tag.getQuestions();
-            questions = questions.map((question) => ({
-              id: question.id,
-              heading: question.heading,
-              description: question.description,
-            }));
-          }
-          filteredQuestions[tagName] = questions;
-        }
-      }
-    }
-
-    return res.status(200).json({
-      filteredQuestions,
+  try {
+    let filterTags = req.query.filterTags;
+    const tags = filterTags.split(",").join(" ");
+    const { body } = await client.search({
+      index: "smart-classroom",
+      body: {
+        query: {
+          match: { tags: tags },
+        },
+      },
     });
+    res.status(200).json(
+      body.hits.hits.map((hit) => ({
+        id: hit._id,
+        post: hit._source,
+      }))
+    );
+  } catch (error) {
+    res.status(400).json({ error: "No Posts found" });
   }
 };
 
@@ -181,7 +146,6 @@ _createRelatedTagsIfNotExists = (question, tags) => {
       }
     });
   } catch (error) {
-    console.log(error);
     return false;
   }
   return true;

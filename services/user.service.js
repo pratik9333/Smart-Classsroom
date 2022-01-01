@@ -68,4 +68,47 @@ exports.updateProfile = (req, res, next) => {
   });
 };
 
-exports.getUserQuestions = (req, res) => {};
+exports.getUserQuestions = async (req, res) => {
+  try {
+    // find the user by id
+    const user = await User.findByPk(req.userId);
+    // qna response to return
+    const qnaResponses = [];
+    // if user is present
+    if (user) {
+      // get all questions of that user
+      const questions = await user.getQuestions();
+      // if questions are there
+      if (questions) {
+        const eachQnaResponse = {};
+        // for each question, prepare question.id =>{ question details, answer details,tags}
+        for (const question of questions) {
+          const tags = await question.getTags();
+          const answers = await question.getAnswers();
+
+          eachQnaResponse[question.id] = {
+            description: question.description,
+            heading: question.heading,
+            answers: answers.map((answer) => ({
+              description: answer.description,
+              created_by: answer.userId
+            })),
+            tags: tags.map((tag) => tag.name),
+          };
+          qnaResponses.push(eachQnaResponse);
+        }
+      }
+
+      res.status(200).json({
+        message: "success",
+        data: qnaResponses,
+      });
+    }
+
+    res.status(401).json({ error: "No such user" });
+  } catch (error) {
+    res.status(500).json({
+      error: "Interal Server Error",
+    });
+  }
+};

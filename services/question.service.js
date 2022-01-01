@@ -123,8 +123,12 @@ exports.deleteQuestion = async (req, res, next) => {
 };
 
 exports.searchQuestionsByTags = async (req, res, next) => {
+
+  if(!('filterTags' in req.query))
+      next();
+      
   //  questions/?filterTags=tag1,tag2
-  let filterTags = req.query.filterTags;
+  const filterTags = req.query.filterTags;
 
   const filteredQuestions = {};
 

@@ -67,3 +67,5 @@ exports.updateProfile = (req, res, next) => {
     }
   });
 };
+
+exports.getUserQuestions = (req, res) => {};

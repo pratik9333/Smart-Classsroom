@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/user.model");
 const Tag = require("../models/tag.model");
 const Question = require("../models/question.model");
+const client = require("../config/elastic");
 
 exports.getPost = async (req, res, next) => {
   const id = req.params.id;
@@ -58,8 +59,15 @@ exports.createQuestion = async (req, res, next) => {
       description,
     });
     const isSuccess = await _createRelatedTagsIfNotExists(question, tags);
-
     if (isSuccess) {
+      const x = await client.index({
+        index: "smart-classroom",
+        id: question.id,
+        body: req.body,
+      });
+      await client.indices.refresh({ index: "smart-classroom" });
+      console.log(x);
+
       return res.status(201).json({
         id: question.id,
         message: "question created",
@@ -72,9 +80,47 @@ exports.createQuestion = async (req, res, next) => {
   }
 };
 
-exports.editQuestion = (req, res, next) => {};
+exports.editQuestion = async (req, res, next) => {
+  const { id } = req.params;
 
-exports.deleteQuestion = (req, res, next) => {};
+  const user = await User.findByPk(req.userId);
+  const question = await Question.findByPk(id);
+  const checkquestion = await user.hasQuestion(question);
+
+  if (checkquestion && question) {
+    const result = await question.update(req.body);
+    console.log(result);
+    await client.update({
+      index: "smart-classroom",
+      id,
+      body: {
+        doc: req.body,
+      },
+    });
+    res.status(200).json({ success: "Question Updated" });
+  } else {
+    res.status(401).json({ error: "Question not found" });
+  }
+};
+
+exports.deleteQuestion = async (req, res, next) => {
+  const { id } = req.params;
+
+  const user = await User.findByPk(req.userId);
+  const question = await Question.findByPk(id);
+  const checkquestion = await user.hasQuestion(question);
+
+  if (checkquestion && question) {
+    await question.destroy();
+    await client.delete({
+      index: "smart-classroom",
+      id,
+    });
+    res.status(200).json({ success: "Question deleted" });
+  } else {
+    res.status(401).json({ error: "Question not found" });
+  }
+};
 
 exports.searchQuestionsByTags = async (req, res, next) => {
   //  questions/?filterTags=tag1,tag2

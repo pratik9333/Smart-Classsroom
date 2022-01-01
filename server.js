@@ -1,10 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const { Client } = require("@elastic/elasticsearch");
-const config = require("config");
-
-const app = express();
+const client = require("./config/elastic");
 
 const { storage } = require("./middlewares/upload.middleware");
 
@@ -20,6 +17,8 @@ const Tag = require("./models/tag.model");
 const authRoutes = require("./api/auth.route");
 const userRoutes = require("./api/user.route");
 const questionRoutes = require("./api/question.route");
+
+const app = express();
 
 //serve images statically
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -61,22 +60,13 @@ const port = process.env.PORT || 8000; // PORT
 
 // syncing the models with the database and server running
 sequelize.sync().then((result) => {
-  app.listen(port, () => {
-    console.log(`app is runnning at ${port}`);
-  });
+  client
+    .info()
+    .then((response) => {
+      app.listen(port, () => {
+        console.log(`app is runnning at ${port}`);
+      });
+      console.log(response);
+    })
+    .catch((error) => console.error(error));
 });
-
-const client = new Client({
-  cloud: {
-    id: "Smart_Classroom:YXNpYS1zb3V0aDEuZ2NwLmVsYXN0aWMtY2xvdWQuY29tJDRkNWY3ZDk0YzBmYjQyN2E4ZTJjMzRjZWRhMTk1MTM0JGU0MGE0ZmFiNDE0YzQxNDI5OWRiMWJkNTYxNjQzOTI0",
-  },
-  auth: {
-    username: "elastic",
-    password: "oqijCMHzl10MaWS1KxisNv7h",
-  },
-});
-
-client
-  .info()
-  .then((response) => console.log(response))
-  .catch((error) => console.error(error));

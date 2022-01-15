@@ -94,6 +94,7 @@ exports.getUserQuestions = async (req, res) => {
             heading: question.heading,
             id: question.id,
             answers: answers.map((answer) => ({
+              id: answer.id,
               description: answer.description,
               created_by: answer.userId,
             })),

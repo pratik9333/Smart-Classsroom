@@ -16,7 +16,7 @@ const { isAuth } = require("../middlewares/auth.middleware");
 router.get("/questions", searchQuestionsByTags);
 
 // get recent questions
-router.get("/questions", getRecentQuestions);
+router.get("/topquestions", getRecentQuestions);
 
 // get a question
 router.get("/questions/:id", getPost);

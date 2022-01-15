@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+var format = require("date-format");
 
 const User = require("../models/user.model");
 const Tag = require("../models/tag.model");
@@ -45,7 +46,13 @@ exports.createQuestion = async (req, res, next) => {
       await client.index({
         index: "smart-classroom",
         id: question.id,
-        body: req.body,
+        body: {
+          heading: req.body.heading,
+          description: req.body.description,
+          tags: req.body.tags,
+          answers: [],
+          created_at: format.asString("yy-mm-dd  hh:mm:ss.SSS", new Date()), //just the time
+        },
       });
       await client.indices.refresh({ index: "smart-classroom" });
 
@@ -125,7 +132,16 @@ exports.searchQuestionsByTags = async (req, res, next) => {
   }
 };
 
-exports.getRecentQuestions = (req, res, next) => {};
+exports.getRecentQuestions = async (req, res, next) => {
+  try {
+    const questions = await Question.findAll({
+      order: [["id", "DESC"]],
+    });
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(400).json({ error: "No Questions Found" });
+  }
+};
 
 //private function to create tag / add tag
 

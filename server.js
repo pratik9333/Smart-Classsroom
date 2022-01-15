@@ -17,6 +17,7 @@ const Tag = require("./models/tag.model");
 const authRoutes = require("./api/auth.route");
 const userRoutes = require("./api/user.route");
 const questionRoutes = require("./api/question.route");
+const answerRoutes = require("./api/answer.route");
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(multer({ storage: storage }).single("profile"));
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/post", questionRoutes);
+app.use("/api/post", answerRoutes);
 
 // model relations
 

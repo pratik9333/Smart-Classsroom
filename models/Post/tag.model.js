@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const sequelize = require("../../config/db");
 
 const Tag = sequelize.define("tag", {
   name: {
     type: DataTypes.STRING(100),
-    allowNull: false
-  }
+    allowNull: false,
+  },
 });
 
 module.exports = Tag;

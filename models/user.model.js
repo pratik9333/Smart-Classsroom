@@ -53,8 +53,8 @@ User.init(
 
     role: {
       type: DataTypes.ENUM,
-      values: ["teacher", "student"],
-      allowNull: false,
+      values: ["teacher", "student", "manager"],
+      allowNull: true,
       defaultValue: "student",
     },
 

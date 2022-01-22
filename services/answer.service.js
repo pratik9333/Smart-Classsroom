@@ -2,8 +2,8 @@ const { validationResult } = require("express-validator");
 var format = require("date-format");
 
 // const User = require("../models/user.model");
-// const Answer = require("../models/answer.model");
-const Question = require("../models/question.model");
+const Answer = require("../models/Post/answer.model");
+const Question = require("../models/Post/question.model");
 const client = require("../config/elastic");
 
 exports.createAnswer = async (req, res) => {
@@ -33,7 +33,7 @@ exports.createAnswer = async (req, res) => {
         script: {
           source: "ctx._source.answers.add(params.answer)",
           params: {
-            answer: { id: createdAnswer.id, description },
+            answer: [createdAnswer.id, description],
           },
         },
       },
@@ -41,7 +41,31 @@ exports.createAnswer = async (req, res) => {
 
     res.status(200).json({ success: "Answer created" });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Cannot able to create answer" });
   }
+};
+
+exports.editAnswer = async (req, res) => {
+  const { description, questionId, answerId } = req.body;
+
+  try {
+    const answer = await Answer.findByPk(answerId);
+    const question = await Question.findByPk(questionId);
+
+    if (answer && question) {
+      await answer.update(description);
+      await client.update({
+        index: "smart-classroom",
+        id: questionId,
+        body: {
+          script: {
+            source: "ctx._source.answers.add(params.answer)",
+            params: {
+              answer: [createdAnswer.id, description],
+            },
+          },
+        },
+      });
+    }
+  } catch (error) {}
 };

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { body } = require("express-validator");
 
-const { createAnswer } = require("../services/answer.service");
+const { createAnswer, editAnswer } = require("../services/answer.service");
 
 const { isAuth } = require("../middlewares/auth.middleware");
 
@@ -27,8 +27,8 @@ router.post(
   createAnswer
 );
 
-// // edit a question
-// router.put("/questions/:id", isAuth, editQuestion);
+// edit a question
+router.put("/answer", isAuth, editAnswer);
 
 // // delete a question
 // router.delete("/questions/:id", isAuth, deleteQuestion);

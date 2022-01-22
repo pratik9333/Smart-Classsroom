@@ -2,8 +2,8 @@ const { validationResult } = require("express-validator");
 var format = require("date-format");
 
 const User = require("../models/user.model");
-const Tag = require("../models/tag.model");
-const Question = require("../models/question.model");
+const Tag = require("../models/Post/tag.model");
+const Question = require("../models/Post/question.model");
 const client = require("../config/elastic");
 
 exports.getPost = async (req, res) => {
@@ -15,7 +15,14 @@ exports.getPost = async (req, res) => {
       id,
     });
 
-    return res.status(200).json({ post: postObj.body._source });
+    const answers = postObj.body._source.answers.map((ans) => ({
+      id: ans[0],
+      description: ans[1],
+    }));
+
+    return res.status(200).json({
+      post: { ...postObj.body._source, answers: answers },
+    });
   } catch (error) {
     res.status(400).json({ error: "No Post Found" });
   }
@@ -124,10 +131,17 @@ exports.searchQuestionsByTags = async (req, res, next) => {
     res.status(200).json(
       body.hits.hits.map((hit) => ({
         id: hit._id,
-        post: hit._source,
+        post: {
+          ...hit._source,
+          answers: hit._source.answers.map((ans) => ({
+            id: ans[0],
+            description: ans[1],
+          })),
+        },
       }))
     );
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: "No Posts found" });
   }
 };

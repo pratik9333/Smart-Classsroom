@@ -1,18 +1,13 @@
 const router = require("express").Router();
 const { body } = require("express-validator");
 
-const { createAnswer, editAnswer } = require("../services/answer.service");
+const {
+  createAnswer,
+  editAnswer,
+  deleteAnswer,
+} = require("../services/answer.service");
 
 const { isAuth } = require("../middlewares/auth.middleware");
-
-// // search questions by tag
-// router.get("/questions", searchQuestionsByTags);
-
-// // get recent questions
-// router.get("/topquestions", getRecentQuestions);
-
-// // get a question
-// router.get("/questions/:id", getPost);
 
 // create question
 router.post(
@@ -28,9 +23,9 @@ router.post(
 );
 
 // edit a question
-router.put("/answer", isAuth, editAnswer);
+router.put("/question/:queid/answer/:ansid", isAuth, editAnswer);
 
-// // delete a question
-// router.delete("/questions/:id", isAuth, deleteQuestion);
+// delete a question
+router.delete("/question/:queid/answer/:ansid", isAuth, deleteAnswer);
 
 module.exports = router;

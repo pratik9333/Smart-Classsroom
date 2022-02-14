@@ -119,15 +119,19 @@ exports.deleteQuestion = async (req, res, next) => {
 exports.searchQuestionsByTags = async (req, res, next) => {
   try {
     let filterTags = req.query.filterTags;
+    const { offset } = req.query;
     const tags = filterTags.split(",").join(" ");
     const { body } = await client.search({
       index: "smart-classroom",
       body: {
+        from: offset,
+        size: 10,
         query: {
           match: { tags: tags },
         },
       },
     });
+    const totalPosts = body.hits.total.value;
     res.status(200).json(
       body.hits.hits.map((hit) => ({
         id: hit._id,
@@ -138,6 +142,7 @@ exports.searchQuestionsByTags = async (req, res, next) => {
             description: ans[1],
           })),
         },
+        totalPosts,
       }))
     );
   } catch (error) {
@@ -150,6 +155,7 @@ exports.getRecentQuestions = async (req, res, next) => {
   try {
     const questions = await Question.findAll({
       order: [["id", "DESC"]],
+      limit: 10,
     });
     res.status(200).json(questions);
   } catch (error) {

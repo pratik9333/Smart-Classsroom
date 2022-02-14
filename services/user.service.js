@@ -73,13 +73,20 @@ exports.getUserQuestions = async (req, res) => {
     // find the user by id
     const user = await User.findByPk(req.userId);
 
+    const { limit, offset } = req.query;
+
     // qna response to return
     const qnaResponses = [];
 
     // if user is present
     if (user) {
       // get all questions of that user
-      const questions = await user.getQuestions();
+      const questions = await user.getQuestions({
+        limit: +limit,
+        offset: +offset,
+      });
+
+      const totalQuestions = await user.countQuestions();
 
       // if questions are there
       if (questions) {
@@ -105,6 +112,7 @@ exports.getUserQuestions = async (req, res) => {
       res.status(200).json({
         message: "success",
         data: qnaResponses,
+        totalQuestions,
       });
     } else {
       res.status(401).json({ error: "No such user" });

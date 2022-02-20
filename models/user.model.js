@@ -42,9 +42,9 @@ User.init(
 
     role: {
       type: DataTypes.ENUM,
-      values: ["user", "admin"],
+      values: ["student", "admin","teacher"],
       allowNull: true,
-      defaultValue: "admin",
+      defaultValue: "student",
     },
     profile: {
       type: DataTypes.STRING,

@@ -31,33 +31,21 @@ User.init(
       allowNull: false,
     },
 
-    rollno: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-    },
-
     dob: {
       type: DataTypes.STRING,
     },
 
-    classname: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
     gender: {
       type: DataTypes.ENUM,
-      values: ["female", "male", "Other"],
+      values: ["female", "male", "other"],
     },
 
     role: {
       type: DataTypes.ENUM,
-      values: ["teacher", "student", "manager"],
+      values: ["user", "admin"],
       allowNull: true,
-      defaultValue: "student",
+      defaultValue: "admin",
     },
-
     profile: {
       type: DataTypes.STRING,
       defaultValue: "/public/images/defaultimage.jpeg",

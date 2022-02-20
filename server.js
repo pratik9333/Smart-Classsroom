@@ -13,6 +13,7 @@ const authRoutes = require("./api/auth.route");
 const userRoutes = require("./api/user.route");
 const questionRoutes = require("./api/question.route");
 const answerRoutes = require("./api/answer.route");
+const assignmentRoutes = require("./api/assignment.route");
 
 const app = express();
 
@@ -24,11 +25,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // file upload middleware
-app.use(multer({ storage: storage }).single("profile"));
+const imageUploader = multer({ storage: storage("images") });
+const fileUploader = multer({ storage: storage("assignments") });
 
 //Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/auth", imageUploader.single("profile"), authRoutes);
+app.use("/api/user", imageUploader.single("profile"), userRoutes);
+app.use("/api/assignment", fileUploader.single("assignment"), assignmentRoutes);
 app.use("/api/post", questionRoutes);
 app.use("/api/post", answerRoutes);
 

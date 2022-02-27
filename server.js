@@ -28,13 +28,15 @@ app.use(express.urlencoded({ extended: true }));
 // file upload middleware
 const imageUploader = multer({ storage: storage("images") });
 const fileUploader = multer({ storage: storage("assignments") });
+const studentDataUploader = multer({ storage: storage("students") });
+
 
 //Routes
 app.use("/api/auth", imageUploader.single("profile"), authRoutes);
 app.use("/api/user", imageUploader.single("profile"), userRoutes);
 app.use("/api/assignment", fileUploader.single("assignment"), assignmentRoutes);
 app.use("/api/post", questionRoutes);
-app.use("/api/class", classRoutes);
+app.use("/api/class",studentDataUploader.single("studentsData"), classRoutes);
 
 //Server connection
 const port = process.env.PORT || 8000; // PORT

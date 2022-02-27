@@ -1,5 +1,4 @@
 const multer = require("multer");
-const path = require("path");
 
 //multer setting
 exports.storage = (path) => multer.diskStorage({

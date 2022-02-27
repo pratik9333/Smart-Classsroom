@@ -8,7 +8,7 @@ const { signup, signin } = require("../services/auth.service");
 /**
  * @route POST /api/auth/signup
  * @visibility public
- * 
+ *
  */
 router.post(
   "/signup",
@@ -22,10 +22,6 @@ router.post(
     check("password", "Password should be atleast 6 characters").isLength({
       min: 6,
     }),
-
-    check("classname", "Classname should be atleast 3 characters").isLength({
-      min: 3,
-    }),
   ],
   signup
 );
@@ -33,7 +29,7 @@ router.post(
 /**
  * @route POST /api/auth/signin
  * @visibility public
- * 
+ *
  */
 router.post(
   "/signin",

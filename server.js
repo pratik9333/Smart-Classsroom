@@ -14,6 +14,7 @@ const userRoutes = require("./api/user.route");
 const questionRoutes = require("./api/question.route");
 const answerRoutes = require("./api/answer.route");
 const assignmentRoutes = require("./api/assignment.route");
+const classRoutes = require("./api/class.route");
 
 const app = express();
 
@@ -33,7 +34,7 @@ app.use("/api/auth", imageUploader.single("profile"), authRoutes);
 app.use("/api/user", imageUploader.single("profile"), userRoutes);
 app.use("/api/assignment", fileUploader.single("assignment"), assignmentRoutes);
 app.use("/api/post", questionRoutes);
-app.use("/api/post", answerRoutes);
+app.use("/api/class", classRoutes);
 
 //Server connection
 const port = process.env.PORT || 8000; // PORT

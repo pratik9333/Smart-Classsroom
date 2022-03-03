@@ -4,9 +4,9 @@ const {
   createClass,
   addUser,
   addBulkStudent,
-  removeClass,
-  removeUser,
-  getClassDetails,
+  // removeClass,
+  // removeUser,
+  // getClassDetails,
 } = require("../services/class.service");
 
 const { isAuth } = require("../middlewares/auth.middleware");
@@ -20,13 +20,13 @@ router.post("/member", isAuth, addUser);
 // add students - bulk
 router.post("/members/bulk", isAuth, addBulkStudent);
 
-// remove class
-router.delete("/", isAuth, removeClass);
+// // remove class
+// router.delete("/", isAuth, removeClass);
 
-// remove user from class
-router.delete("/member", isAuth, removeUser);
+// // remove user from class
+// router.delete("/member", isAuth, removeUser);
 
-// get class details
-router.get("/members", isAuth, getClassDetails);
+// // get class details
+// router.get("/members", isAuth, getClassDetails);
 
 module.exports = router;

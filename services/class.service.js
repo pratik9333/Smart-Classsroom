@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const readXlsxFile = require("read-excel-file");
 const uuidV4 = require("uuid").v4();
 
-const sendMail = require("../utils/sendMail");
+// const sendMail = require("../utils/sendMail");
 
 exports.createClass = async (req, res) => {
   try {
@@ -52,8 +52,6 @@ exports.addUser = async (req, res) => {
 
 exports.addBulkStudent = async (req, res) => {
   try {
-
-
     const user = await User.findByPk(req.userId);
 
     if (!user || user.role !== "admin") {
@@ -62,38 +60,45 @@ exports.addBulkStudent = async (req, res) => {
         .json({ error: "You are not allowded to access this resource" });
     }
 
-    const {classId,xlsMapping} = req.body; 
-    
+    const { classId, xlsMapping } = req.body;
+
     const path = `/public/student/${classId}.xlsx`;
 
     const users = [];
 
-    const receivers = []; 
+    const receivers = [];
 
-    await readXlsxFile(fs.createReadStream(path),{ xlsMapping } ,(eachUser)=>{
-
-      const newUser = await User.create({ ...eachUser,password: uuidV4() })
-      users.push(newUser);
-      receivers.push({ email: eachUser.email,password: uuidV4(),fullName: eachUser.fullName });
-    })
+    await readXlsxFile(
+      fs.createReadStream(path),
+      { xlsMapping },
+      async (eachUser) => {
+        const newUser = await User.create({ ...eachUser, password: uuidV4() });
+        users.push(newUser);
+        receivers.push({
+          email: eachUser.email,
+          password: uuidV4(),
+          fullName: eachUser.fullName,
+        });
+      }
+    );
 
     const getClass = await Class.findByPk(classid);
 
     await getClass.addUsers(users);
 
     // send email to users
-    const emailPromises = await Promise.all(sendMail('senderName', 'senderEmail', 'senderPass', receivers,'',{user}));
+    const emailPromises = await Promise.all(
+      sendMail("senderName", "senderEmail", "senderPass", receivers, "", {
+        user,
+      })
+    );
     console.log(emailPromises);
 
-
-    return res.status(200).json({ success: true,message: "User created successfully." });
-
+    return res
+      .status(200)
+      .json({ success: true, message: "User created successfully." });
   } catch (error) {
-
     console.log(error);
     return res.status(500).json({ error: "Error while creating user" });
-
   }
 };
-
-

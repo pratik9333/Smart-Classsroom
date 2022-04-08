@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "33fdbadb-c29f-4fce-af61-2961c66aa965",
+		"name": "Auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fullname\" : \"raghav gupta\",\n    \"email\" : \"raghav@gmail.com\",\n    \"password\" : \"raghav123\",\n    \"role\" : \"student\",\n    \"classname\" : \"d12b\",\n    \"rollno\" : 4,\n    \"dob\" : \"21/09/2001\",\n    \"gender\" : \"male\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/auth/signup",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"raghav@gmail.com\",\n    \"password\" : \"raghav123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/auth/signin",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

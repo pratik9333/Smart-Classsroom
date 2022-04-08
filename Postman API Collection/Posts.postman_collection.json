@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "306ced03-b221-4d42-bf72-1fc09c210016",
+		"name": "Posts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateQuestion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"heading\" : \"what is C\",\n    \"description\" : \"tell me more about c\",\n    \"tags\": [\"nerd\", \"programming\", \"c\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/post/questions",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"questions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateAnswer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"questionId\" : 1,\n    \"description\" : \"c is the great language\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/post/answer",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"answer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPost",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/api/post/questions/1",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"questions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPostsByTags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/api/post/questions/?filterTags=nerd&offset=0",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"questions",
+						""
+					],
+					"query": [
+						{
+							"key": "filterTags",
+							"value": "nerd"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateQuestion",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"heading\" : \"what is\",\n    \"description\" : \"tell me less about c++\",\n    \"tags\": [\"Languages\", \"abcd\", \"c++\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/post/questions/1",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"questions",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getRecentQuestions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/api/post/topquestions",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"topquestions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteQuestion",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/api/post/questions/3",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"questions",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getuserQuestions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{localhost}}/api/user/questions?limit=5&offset=0",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"questions"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateAnswer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\" : \"Updated Answer\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/post/question/1/answer/2",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"question",
+						"1",
+						"answer",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteAnswer",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\" : \"Updated Answer\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/api/post/question/1/answer/2",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"api",
+						"post",
+						"question",
+						"1",
+						"answer",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjEsImlhdCI6MTY0NDg2Nzk5MywiZXhwIjoxNjQ0OTAzOTkzfQ.6XgQKyGmWq3L6QiC7CN4eUG2FGSf6s0xtS0nQhYfXCs",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

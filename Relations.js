@@ -3,8 +3,10 @@ const Question = require("./models/Post/question.model");
 const Answer = require("./models/Post/answer.model");
 const Tag = require("./models/Post/tag.model");
 const Class = require("./models/class.model");
-const {Assignment,Response} = require("./models/Assignment/assignment.model");
-
+const {
+  Assignment,
+  Response,
+} = require("./models/Assignment/assignment.model");
 
 exports.Relations = () => {
   // model relations : POST
@@ -24,25 +26,19 @@ exports.Relations = () => {
   Question.belongsTo(User);
   User.hasMany(Question);
 
+  // N:M User and Class
+  Class.belongsToMany(User, { through: "ClassUser" });
+  User.belongsToMany(Class, { through: "ClassUser" });
 
-  // N:M User and Class 
-  Class.belongsToMany(User,{ through: 'ClassUser'});
-  User.belongsToMany(Class, { through: 'ClassUser'});
-
-
-  // 1:M User and Assignment
-  Assignment.belongsTo(User);
-  User.hasMany(Assignment);
-
+  // N:M User and Assignment
+  Assignment.belongsToMany(User, { through: "AssignmentUser" });
+  User.belongsToMany(Assignment, { through: "AssignmentUser" });
 
   // 1:M Assignment and Response
   Response.belongsTo(Assignment);
   Assignment.hasMany(Response);
 
   // 1:M User and Response
-  Response.belongsTo(User); 
+  Response.belongsTo(User);
   User.hasMany(Response);
 };
-
-
-    

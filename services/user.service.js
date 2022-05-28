@@ -133,7 +133,7 @@ exports.joinClass = async (req, res) => {
       return res.status(400).json({ error: "Please provide class code" });
     }
 
-    const getClass = await Class.findOne({ classCode: classcode });
+    const getClass = await Class.findOne({ where: { classCode: classcode } });
 
     const loggedUser = await User.findByPk(req.userId);
 

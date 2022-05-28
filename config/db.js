@@ -12,6 +12,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.PG_HOST,
     dialect: "postgres",
+    dialectOptions: { connectTimeout: 60000 },
     logging: false,
   }
 );

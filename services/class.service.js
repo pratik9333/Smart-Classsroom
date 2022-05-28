@@ -13,7 +13,7 @@ exports.createClass = async (req, res) => {
 
     const user = await User.findByPk(req.userId);
 
-    if (!user || user.role !== "admin") {
+    if (!user || user.role !== "teacher") {
       return res
         .status(403)
         .json({ error: "You are not allowded to access this resource" });
@@ -34,8 +34,10 @@ exports.removeUserFromClass = async (req, res) => {
   try {
     const { classCode, userId } = req.body;
 
-    if (!classCode) {
-      return res.status(400).json({ error: "Please provide class code" });
+    if (!classCode || !userId) {
+      return res
+        .status(400)
+        .json({ error: "Please provide class code and userID" });
     }
 
     const loggedUser = await User.findByPk(req.userId);
@@ -45,7 +47,13 @@ exports.removeUserFromClass = async (req, res) => {
       return res.status(400).json({ error: "Unauthorized access" });
     }
 
-    const cls = await Class.findOne({ classCode: classCode });
+    if (removeUser.role === "teacher") {
+      return res
+        .status(400)
+        .json({ error: "Cannot able to remove teacher from class" });
+    }
+
+    const cls = await Class.findOne({ where: { classCode: classCode } });
 
     // removing user created responses
     await removeUser.removeResponses();
@@ -53,7 +61,7 @@ exports.removeUserFromClass = async (req, res) => {
     // removing user from class as requested by teacher
     await cls.removeUser(removeUser);
 
-    return res.status(500).json({ success: "User was removed from class" });
+    return res.status(200).json({ success: "User was removed from class" });
   } catch (error) {
     return res.status(500).json({ error: "Error while removing user" });
   }
@@ -73,12 +81,14 @@ exports.removeClass = async (req, res) => {
       return res.status(400).json({ error: "Unauthorized access" });
     }
 
-    const cls = await Class.findOne({ classCode: classCode });
+    const cls = await Class.findOne({ where: { classCode: classCode } });
 
-    const assigmnents = cls.getAssigmnents();
+    const assignments = cls.getAssignments();
+
+    console.log(assignments);
 
     // removing particular responses of assignment
-    for (let assignment of assigmnents) {
+    for (let assignment of assignments) {
       await assignment.removeResponses();
     }
 
@@ -90,6 +100,7 @@ exports.removeClass = async (req, res) => {
 
     return res.status(500).json({ success: "Class was deleted" });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: "Error while removing class" });
   }
 };
@@ -102,7 +113,9 @@ exports.getClassDetails = async (req, res) => {
       return res.status(400).json({ error: "Please provide class code" });
     }
 
-    const classMembers = await Class.getUsers();
+    const cls = await Class.findOne({ where: { classCode: classCode } });
+
+    const classMembers = await cls.getUsers();
 
     return res.status(200).json({ success: true, classMembers });
   } catch (error) {

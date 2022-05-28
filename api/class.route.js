@@ -2,11 +2,9 @@ const router = require("express").Router();
 
 const {
   createClass,
-  addUser,
-  addBulkStudent,
-  // removeClass,
-  // removeUser,
-  // getClassDetails,
+  removeUserFromClass,
+  removeClass,
+  getClassDetails,
 } = require("../services/class.service");
 
 const { isAuth } = require("../middlewares/auth.middleware");
@@ -14,13 +12,13 @@ const { isAuth } = require("../middlewares/auth.middleware");
 // create class
 router.post("/", isAuth, createClass);
 
-// remove class
-// router.delete("/", isAuth, removeClass);
-
 // remove user from class
-// router.delete("/member", isAuth, removeUser);
+router.delete("/remove/user", isAuth, removeUserFromClass);
+
+// remove class
+router.delete("/remove", isAuth, removeClass);
 
 // get class details
-// router.get("/members", isAuth, getClassDetails);
+router.get("/members", isAuth, getClassDetails);
 
 module.exports = router;

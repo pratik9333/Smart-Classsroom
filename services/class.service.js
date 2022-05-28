@@ -123,8 +123,7 @@ exports.getClassDetails = async (req, res) => {
   }
 };
 
-/* feature deleted 
-
+/* add bulking student feature deleted 
 exports.addBulkStudent = async (req, res) => {
   try {
     const user = await User.findByPk(req.userId);

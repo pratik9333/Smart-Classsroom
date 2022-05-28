@@ -38,9 +38,10 @@ app.use("/api/post", questionRoutes);
 app.use("/api/class", studentDataUploader.single("studentsData"), classRoutes);
 
 //Server connection
-const port = process.env.PORT || 8000; // PORT
+const port = process.env.PORT || 8000;
 
-require("./Relations").Relations(); // Relations
+// importing Relations
+require("./utils/Relations").Relations();
 
 // syncing the models with the database and server running
 sequelize.sync().then((result) => {

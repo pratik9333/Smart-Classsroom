@@ -2,7 +2,6 @@ require("dotenv").config({ path: __dirname + "./config/.env" });
 const User = require("../models/user.model");
 const Class = require("../models/class.model");
 
-//get profile
 exports.getProfile = (req, res) => {
   User.findOne({ where: { id: req.userId } })
     .then((user) => {
@@ -39,7 +38,6 @@ exports.getProfile = (req, res) => {
     });
 };
 
-//update profile
 exports.updateProfile = (req, res, next) => {
   const updateprofile = {};
 

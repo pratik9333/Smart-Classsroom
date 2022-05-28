@@ -1,5 +1,6 @@
 require("dotenv").config({ path: __dirname + "./config/.env" });
 const User = require("../models/user.model");
+const Class = require("../models/class.model");
 
 //get profile
 exports.getProfile = (req, res) => {
@@ -121,5 +122,25 @@ exports.getUserQuestions = async (req, res) => {
     res.status(500).json({
       error: "Interal Server Error",
     });
+  }
+};
+
+exports.joinClass = async (req, res) => {
+  try {
+    const { classcode } = req.body;
+
+    if (!classcode) {
+      return res.status(400).json({ error: "Please provide class code" });
+    }
+
+    const getClass = await Class.findOne({ classCode: classcode });
+
+    const loggedUser = await User.findByPk(req.userId);
+
+    await getClass.addUser(loggedUser);
+
+    return res.status(200).json({ success: true, message: "User added" });
+  } catch (error) {
+    return res.status(500).json({ error: "Error while adding user" });
   }
 };

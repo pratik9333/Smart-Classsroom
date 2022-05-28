@@ -4,8 +4,6 @@ const User = require("../models/user.model");
 const readXlsxFile = require("read-excel-file");
 const uuidV4 = require("uuid").v4();
 
-// const sendMail = require("../utils/sendMail");
-
 exports.createClass = async (req, res) => {
   try {
     const { classname, classsection } = req.body;

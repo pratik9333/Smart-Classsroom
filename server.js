@@ -34,14 +34,14 @@ const studentDataUploader = multer({ storage: storage("students") });
 app.use("/api/auth", imageUploader.single("profile"), authRoutes);
 app.use("/api/user", imageUploader.single("profile"), userRoutes);
 app.use("/api/assignment", fileUploader.single("assignment"), assignmentRoutes);
-app.use("/api/post", questionRoutes);
+app.use("/api/post", questionRoutes, answerRoutes);
 app.use("/api/class", studentDataUploader.single("studentsData"), classRoutes);
 
 //Server connection
 const port = process.env.PORT || 8000;
 
 // importing Relations
-require("./utils/Relations").Relations();
+require("./utils/relations").Relations();
 
 // syncing the models with the database and server running
 sequelize.sync().then((result) => {

@@ -83,9 +83,7 @@ exports.removeClass = async (req, res) => {
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
 
-    const assignments = cls.getAssignments();
-
-    console.log(assignments);
+    const assignments = await cls.getAssignments();
 
     // removing particular responses of assignment
     for (let assignment of assignments) {
@@ -114,6 +112,12 @@ exports.getClassDetails = async (req, res) => {
     }
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
+
+    if (!cls) {
+      return res
+        .status(400)
+        .json({ error: "Invalid class code or class does not exists anymore" });
+    }
 
     const classMembers = await cls.getUsers();
 

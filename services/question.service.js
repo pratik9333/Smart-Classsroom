@@ -2,8 +2,8 @@ const { validationResult } = require("express-validator");
 var format = require("date-format");
 
 const User = require("../models/user.model");
-const Tag = require("../models/Post/tag.model");
-const Question = require("../models/Post/question.model");
+const Tag = require("../models/post/tag.model");
+const Question = require("../models/post/question.model");
 const client = require("../config/elastic");
 
 exports.getPost = async (req, res) => {

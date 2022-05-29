@@ -1,12 +1,12 @@
 const User = require("../models/user.model");
-const Question = require("../models/Post/question.model");
-const Answer = require("../models/Post/answer.model");
-const Tag = require("../models/Post/tag.model");
+const Question = require("../models/post/question.model");
+const Answer = require("../models/post/answer.model");
+const Tag = require("../models/post/tag.model");
 const Class = require("../models/class.model");
 const {
   Assignment,
   Response,
-} = require("../models/Assignment/assignment.model");
+} = require("../models/assignment/assignment.model");
 
 exports.Relations = () => {
   // model relations : POST

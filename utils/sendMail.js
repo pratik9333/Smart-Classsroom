@@ -1,9 +1,15 @@
 const nodemailer = require("nodemailer");
 
-exports = async (senderName, senderEmail, senderPass, receiversData,subject,aditionalInfo) => {
-
-  if('user' in aditionalInfo)
-    const {user} = aditionalInfo;
+exports = async (
+  senderName,
+  senderEmail,
+  senderPass,
+  receiversData,
+  subject,
+  aditionalInfo
+) => {
+  // if('user' in aditionalInfo)
+  //   const {user} = aditionalInfo;
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -17,10 +23,8 @@ exports = async (senderName, senderEmail, senderPass, receiversData,subject,adit
   const emailPromises = [];
 
   for (let eachUser of receiversData) {
-
-
-    emailPromises.push(transporter
-      .sendMail({
+    emailPromises.push(
+      transporter.sendMail({
         from: `"${senderName} ${senderEmail}`, // sender address
         to: eachUser.email, // list of receivers
         subject: subject, // Subject line
@@ -32,8 +36,9 @@ exports = async (senderName, senderEmail, senderPass, receiversData,subject,adit
         Username: ${eachUser.email}
         Password: ${eachUser.password}
 
-        ` , // html body
-      }));
+        `, // html body
+      })
+    );
   }
 
   return emailPromises;

@@ -1,8 +1,8 @@
 const { validationResult } = require("express-validator");
 
 // const User = require("../models/user.model");
-const Answer = require("../models/Post/answer.model");
-const Question = require("../models/Post/question.model");
+const Answer = require("../models/post/answer.model");
+const Question = require("../models/post/question.model");
 const client = require("../config/elastic");
 const User = require("../models/user.model");
 

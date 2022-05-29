@@ -30,10 +30,6 @@ exports.Relations = () => {
   Class.belongsToMany(User, { through: "ClassUser" });
   User.belongsToMany(Class, { through: "ClassUser" });
 
-  // N:M User and Assignment
-  Assignment.belongsToMany(User, { through: "AssignmentUser" });
-  User.belongsToMany(Assignment, { through: "AssignmentUser" });
-
   // 1:M Assignment and Response
   Response.belongsTo(Assignment);
   Assignment.hasMany(Response);

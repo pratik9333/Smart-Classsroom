@@ -25,17 +25,29 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// file upload middleware
-const imageUploader = multer({ storage: storage("images") });
-const fileUploader = multer({ storage: storage("assignments") });
-const studentDataUploader = multer({ storage: storage("students") });
+// configuration for multer
 
+//multer setting
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, `public`);
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    cb(
+      null,
+      `attachments/assignment-${file.originalname}-${Date.now()}.${ext}`
+    );
+  },
+});
+
+const upload = multer({ storage: multerStorage });
 //Routes
-app.use("/api/auth", imageUploader.single("profile"), authRoutes);
-app.use("/api/user", imageUploader.single("profile"), userRoutes);
-app.use("/api/assignment", fileUploader.single("assignment"), assignmentRoutes);
+app.use("/api/auth", upload.single("profile"), authRoutes);
+app.use("/api/user", upload.single("profile"), userRoutes);
+app.use("/api/assignment", upload.single("attachment"), assignmentRoutes);
 app.use("/api/post", questionRoutes, answerRoutes);
-app.use("/api/class", studentDataUploader.single("studentsData"), classRoutes);
+app.use("/api/class", upload.single("studentsData"), classRoutes);
 
 //Server connection
 const port = process.env.PORT || 8000;

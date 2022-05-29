@@ -133,7 +133,23 @@ exports.joinClass = async (req, res) => {
 
     const getClass = await Class.findOne({ where: { classCode: classcode } });
 
+    if (!getClass) {
+      return res
+        .status(400)
+        .json({ error: "Invalid classcode or class does not exists anymore" });
+    }
+
     const loggedUser = await User.findByPk(req.userId);
+
+    const classMembers = await Class.getUsers();
+
+    for (let member of classMembers) {
+      if (member.id === loggedUser.id) {
+        return res
+          .status(400)
+          .json({ error: "User has already joined the class" });
+      }
+    }
 
     await getClass.addUser(loggedUser);
 

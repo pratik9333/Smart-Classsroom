@@ -5,6 +5,7 @@ const {
   createAssignment,
   updateAssignment,
   deleteAssignment,
+  getClassAssignments,
 } = require("../services/assignment.service");
 
 // create assignment
@@ -15,5 +16,8 @@ router.put("/update/:classId/:assignmentId", isAuth, updateAssignment);
 
 //delete assignment
 router.delete("/delete/:classId/:assignmentId", isAuth, deleteAssignment);
+
+//get class assignments
+router.get("/:classId", isAuth, getClassAssignments);
 
 module.exports = router;

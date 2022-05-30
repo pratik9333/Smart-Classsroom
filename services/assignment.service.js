@@ -207,3 +207,27 @@ exports.deleteAssignment = async (req, res) => {
     res.status(500).json({ error: "unable to delete assignment" });
   }
 };
+
+exports.getClassAssignments = async (req, res) => {
+  try {
+    const { classId } = req.params;
+
+    if (!classId) {
+      return res.status(400).json({ error: "Please provide class ID" });
+    }
+
+    const cls = await Class.findOne({ where: { classCode: classId } });
+
+    if (cls.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Invalid class code or class does not exists" });
+    }
+
+    const clsAssignments = await cls.getAssignments();
+
+    return res.status(200).json({ success: true, clsAssignments });
+  } catch (error) {
+    res.status(500).json({ error: "unable to fetch assignments" });
+  }
+};

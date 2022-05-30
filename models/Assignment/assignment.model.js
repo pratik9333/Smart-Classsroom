@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/db");
 
-const Assignment = sequelize.define(
+exports.Assignment = sequelize.define(
   "assignment",
   {
     subjectName: {
@@ -32,7 +32,7 @@ const Assignment = sequelize.define(
   { timestamps: true }
 );
 
-const Response = sequelize.define(
+exports.Response = sequelize.define(
   "response",
   {
     description: {
@@ -50,8 +50,3 @@ const Response = sequelize.define(
   },
   { timestamps: true }
 );
-
-module.exports = {
-  Assignment,
-  Response,
-};

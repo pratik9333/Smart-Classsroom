@@ -55,8 +55,10 @@ exports.updateAssignment = async (req, res) => {
 
     let flag = 0;
 
-    if (!assignmentId) {
-      return res.status(400).json({ error: "Please provide assignment ID" });
+    if (!assignmentId || !classId) {
+      return res
+        .status(400)
+        .json({ error: "Please provide assignment and class ID" });
     }
 
     if (!subjectName || !description || !dueDate) {
@@ -99,7 +101,7 @@ exports.updateAssignment = async (req, res) => {
         // getting attachment file name
         const assignmentFileName = assignment.attachments.split("/")[5];
 
-        // checking if sending file name is same as saved file name in attachments directory
+        // checking if sending file name is not same as saved file name in attachments directory
         if (req.file.filename.split("/")[1] !== assignmentFileName) {
           // reading all files from our attachments directory
           fs.readdir(path, (err, files) => {
@@ -132,5 +134,76 @@ exports.updateAssignment = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "unable to update assignment" });
+  }
+};
+
+exports.deleteAssignment = async (req, res) => {
+  try {
+    let flag = 0;
+    const { assignmentId, classId } = req.params;
+
+    if (!assignmentId || !classId) {
+      return res
+        .status(400)
+        .json({ error: "Please provide assignment and class ID" });
+    }
+
+    const assignment = await Assignment.findByPk(assignmentId);
+    const cls = await Class.findOne({ where: { classCode: classId } });
+
+    if (!assignment) {
+      return res.status(400).json({ error: "Assignment does not exists" });
+    }
+
+    if (cls.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Invalid class Id or class does not exists anymore" });
+    }
+
+    const clsAssignments = await cls.getAssignments();
+
+    for (let assign of clsAssignments) {
+      if (assign.id == assignmentId) {
+        flag = 1;
+        break;
+      }
+    }
+
+    if (flag === 0) {
+      return res
+        .status(400)
+        .json({ error: "Assignment does not belong to this class" });
+    }
+
+    if (assignment.attachments) {
+      let path = "./public/attachments/";
+
+      // getting attachment file name
+      const assignmentFileName = assignment.attachments.split("/")[5];
+
+      // reading all files from our attachments directory
+      fs.readdir(path, (err, files) => {
+        if (err) throw err;
+
+        // looping through all files from directory
+        files.forEach((file) => {
+          if (file === assignmentFileName) {
+            fs.unlinkSync(path + file); // deleting file if filename matches
+          }
+        });
+      });
+    }
+
+    // deleting assignment
+    await assignment.destroy();
+
+    res.status(200).json({
+      success: true,
+      message: `Assignment deleted`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "unable to delete assignment" });
   }
 };

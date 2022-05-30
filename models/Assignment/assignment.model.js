@@ -41,11 +41,7 @@ exports.Response = sequelize.define(
     },
     attachments: {
       type: DataTypes.STRING(10000),
-      allowNull: true,
-    },
-    score: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
   },
   { timestamps: true }

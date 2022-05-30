@@ -8,8 +8,9 @@ exports.isAuth = (req, res, next) => {
     req.userId = decodedPayload._id;
     next();
   } catch (err) {
+    console.log(err);
     return res
       .status(400)
-      .json({ message: "token invalid or expired, please try again" });
+      .json({ err, message: "token invalid or expired, please try again" });
   }
 };

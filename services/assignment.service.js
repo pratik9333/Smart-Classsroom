@@ -4,14 +4,16 @@ const Assignment = require("../models/assignment/assignment.model");
 
 exports.createAssignment = async (req, res) => {
   try {
-    const { name, dueDate, classCode } = req.body;
+    const { subjectName, dueDate } = req.body;
 
-    if (!name || !dueDate || !classCode) {
+    const { classId } = req.params;
+
+    if (!subjectName || !dueDate || !classId) {
       return res.status(400).json({ error: "please provide all fields" });
     }
 
     const loggedUser = await User.findByPk(req.userId);
-    const cls = await Class.findOne({ where: { classCode } });
+    const cls = await Class.findOne({ where: { classCode: classId } });
 
     if (!cls) {
       return res
@@ -26,30 +28,17 @@ exports.createAssignment = async (req, res) => {
     }
 
     req.body.createdBy = loggedUser.id;
+    req.body.points = parseInt(req.body.points);
 
     if (req.file) {
       req.body.attachments =
         `${req.protocol}://${req.get("host")}/` + req.file.path;
     }
-    console.log(typeof loggedUser.id);
 
-    const assignment = {
-      name,
-      description: req.body.description
-        ? req.body.description
-        : "no description",
-      createdBy: loggedUser.id,
-      dueDate,
-      points: req.body.points ? req.body.points : 0,
-      attachments: req.file
-        ? `${req.protocol}://${req.get("host")}/${req.file.path}`
-        : "no attachments",
-    };
-
-    const createdAssignment = await cls.createAssignment(assignment);
+    const createdAssignment = await cls.createAssignment(req.body);
 
     res.status(200).json({
-      message: `Assignment of ${req.name} was created`,
+      message: `Assignment of ${req.body.subjectName} was created`,
       createdAssignment,
     });
   } catch (error) {

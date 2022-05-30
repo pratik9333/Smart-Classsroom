@@ -4,7 +4,7 @@ const sequelize = require("../../config/db");
 const Assignment = sequelize.define(
   "assignment",
   {
-    name: {
+    subjectName: {
       type: DataTypes.STRING(30),
       allowNull: false,
     },
@@ -15,10 +15,6 @@ const Assignment = sequelize.define(
     createdBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATEONLY,
-      defaultValue: new Date(),
     },
     dueDate: {
       type: DataTypes.STRING(10),

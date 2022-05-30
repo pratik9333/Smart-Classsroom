@@ -26,18 +26,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // configuration for multer
-
-//multer setting
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, `public`);
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];
-    cb(
-      null,
-      `attachments/assignment-${file.originalname}-${Date.now()}.${ext}`
-    );
+    cb(null, `attachments/assignment-${file.originalname}.${ext}`);
   },
 });
 

@@ -13,12 +13,6 @@ exports.createClass = async (req, res) => {
 
     const user = await User.findByPk(req.userId);
 
-    if (!user || user.role !== "teacher") {
-      return res
-        .status(403)
-        .json({ error: "You are not allowded to access this resource" });
-    }
-
     const createdClass = await user.createClass({
       name: classname,
       section: classsection,
@@ -40,12 +34,7 @@ exports.removeUserFromClass = async (req, res) => {
         .json({ error: "Please provide class code and userID" });
     }
 
-    const loggedUser = await User.findByPk(req.userId);
     const removeUser = await User.findByPk(userId);
-
-    if (loggedUser.role !== "teacher") {
-      return res.status(400).json({ error: "Unauthorized access" });
-    }
 
     if (removeUser.role === "teacher") {
       return res
@@ -54,6 +43,8 @@ exports.removeUserFromClass = async (req, res) => {
     }
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
+
+    // TODO: check if user belongs to the this class
 
     // removing user created responses
     await removeUser.removeResponses();
@@ -73,12 +64,6 @@ exports.removeClass = async (req, res) => {
 
     if (!classCode) {
       return res.status(400).json({ error: "Please provide class code" });
-    }
-
-    const loggedUser = await User.findByPk(req.userId);
-
-    if (loggedUser.role !== "teacher") {
-      return res.status(400).json({ error: "Unauthorized access" });
     }
 
     const cls = await Class.findOne({ where: { classCode: classCode } });

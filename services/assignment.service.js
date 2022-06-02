@@ -28,15 +28,17 @@ exports.createAssignment = async (req, res) => {
         .json({ error: "Assignment can only create by the teacher of class" });
     }
 
-    req.body.createdBy = loggedUser.id;
-    req.body.points = parseInt(req.body.points);
+    req.body.req.body.points = parseInt(req.body.points);
 
     if (req.file) {
       req.body.attachments =
         `${req.protocol}://${req.get("host")}/` + req.file.path;
     }
 
-    const createdAssignment = await cls.createAssignment(req.body);
+    const createdAssignment = await loggedUser.createAssignment(req.body);
+
+    // setting up class relation with assignment
+    await cls.addAssignment(createdAssignment);
 
     res.status(200).json({
       message: `Assignment of ${req.body.subjectName} was created`,
@@ -66,6 +68,7 @@ exports.updateAssignment = async (req, res) => {
     }
 
     const assignment = await Assignment.findByPk(assignmentId);
+    const loggedUser = await User.findByPk(req.userId);
     const cls = await Class.findOne({ where: { classCode: classId } });
 
     if (cls.length === 0) {
@@ -78,9 +81,9 @@ exports.updateAssignment = async (req, res) => {
       return res.status(400).json({ error: "Assignment does not exists" });
     }
 
-    const clsAssignments = await cls.getAssignments();
+    const userCreatedAssignments = await loggedUser.getAssignments();
 
-    for (let assign of clsAssignments) {
+    for (let assign of userCreatedAssignments) {
       if (assign.id == assignmentId) {
         flag = 1;
         break;
@@ -88,32 +91,21 @@ exports.updateAssignment = async (req, res) => {
     }
 
     if (flag === 0) {
-      return res
-        .status(400)
-        .json({ error: "Assignment does not belong to this class" });
+      return res.status(400).json({
+        error: `This assignment does not belong to ${loggedUser.fullname}`,
+      });
     }
 
     if (req.file) {
       // checking if existing assignment has attachments
       if (assignment.attachments) {
-        let path = "./public/attachments/";
-
-        // getting attachment file name
         const assignmentFileName = assignment.attachments.split("/")[5];
+        let path = `./public/attachments/${assignmentFileName}`;
 
-        // checking if sending file name is not same as saved file name in attachments directory
         if (req.file.filename.split("/")[1] !== assignmentFileName) {
-          // reading all files from our attachments directory
-          fs.readdir(path, (err, files) => {
-            if (err) throw err;
-
-            // looping through all files from directory
-            files.forEach((file) => {
-              if (file === assignmentFileName) {
-                fs.unlinkSync(path + file); // deleting file if filename matches
-              }
-            });
-          });
+          if (fs.existsSync(path)) {
+            fs.unlinkSync(path);
+          }
         }
       }
       req.body.attachments =
@@ -128,7 +120,7 @@ exports.updateAssignment = async (req, res) => {
     const updatedAssignment = await assignment.update(req.body);
 
     res.status(200).json({
-      message: `Assignment updated`,
+      message: `Assignment of ${updatedAssignment.subjectName} was updated`,
       updatedAssignment,
     });
   } catch (error) {
@@ -149,6 +141,7 @@ exports.deleteAssignment = async (req, res) => {
     }
 
     const assignment = await Assignment.findByPk(assignmentId);
+    const loggedUser = await User.findByPk(req.userId);
     const cls = await Class.findOne({ where: { classCode: classId } });
 
     if (!assignment) {
@@ -161,9 +154,9 @@ exports.deleteAssignment = async (req, res) => {
         .json({ error: "Invalid class Id or class does not exists anymore" });
     }
 
-    const clsAssignments = await cls.getAssignments();
+    const userCreatedAssignments = await loggedUser.getAssignments();
 
-    for (let assign of clsAssignments) {
+    for (let assign of userCreatedAssignments) {
       if (assign.id == assignmentId) {
         flag = 1;
         break;
@@ -171,28 +164,17 @@ exports.deleteAssignment = async (req, res) => {
     }
 
     if (flag === 0) {
-      return res
-        .status(400)
-        .json({ error: "Assignment does not belong to this class" });
+      return res.status(400).json({
+        error: `This assignment does not belong to ${loggedUser.fullname}`,
+      });
     }
 
     if (assignment.attachments) {
-      let path = "./public/attachments/";
-
-      // getting attachment file name
       const assignmentFileName = assignment.attachments.split("/")[5];
-
-      // reading all files from our attachments directory
-      fs.readdir(path, (err, files) => {
-        if (err) throw err;
-
-        // looping through all files from directory
-        files.forEach((file) => {
-          if (file === assignmentFileName) {
-            fs.unlinkSync(path + file); // deleting file if filename matches
-          }
-        });
-      });
+      let path = `./public/attachments/${assignmentFileName}`;
+      if (fs.existsSync(path)) {
+        fs.unlinkSync(path);
+      }
     }
 
     // deleting assignment
@@ -231,3 +213,36 @@ exports.getClassAssignments = async (req, res) => {
     res.status(500).json({ error: "unable to fetch assignments" });
   }
 };
+
+// ***JUNK CODE***
+
+// reading all files from our attachments directory
+// fs.readdir(path, (err, files) => {
+//   if (err) throw err;
+
+//   // looping through all files from directory
+//   files.forEach((file) => {
+//     if (file === assignmentFileName) {
+//       fs.unlinkSync(path + file); // deleting file if filename matches
+//     }
+//   });
+// });
+
+// if (assignment.attachments) {
+//   let path = "./public/attachments/";
+
+//   // getting attachment file name
+//   const assignmentFileName = assignment.attachments.split("/")[5];
+
+//   // reading all files from our attachments directory
+//   fs.readdir(path, (err, files) => {
+//     if (err) throw err;
+
+//     // looping through all files from directory
+//     files.forEach((file) => {
+//       if (file === assignmentFileName) {
+//         fs.unlinkSync(path + file); // deleting file if filename matches
+//       }
+//     });
+//   });
+// }

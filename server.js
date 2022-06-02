@@ -2,7 +2,10 @@ const express = require("express");
 const path = require("path");
 const client = require("./config/elastic");
 
-const {profileUpload,assignmentUpload} = require("./middlewares/upload.middleware");
+const {
+  profileUpload,
+  assignmentUpload,
+} = require("./middlewares/upload.middleware");
 
 // db models
 const sequelize = require("./config/db");
@@ -27,7 +30,11 @@ app.use(express.urlencoded({ extended: true }));
 //Routes
 app.use("/api/auth", profileUpload.single("profile"), authRoutes);
 app.use("/api/user", profileUpload.single("profile"), userRoutes);
-app.use("/api/assignment", assignmentUpload.single("attachment"), assignmentRoutes);
+app.use(
+  "/api/assignment",
+  assignmentUpload.single("attachment"),
+  assignmentRoutes
+);
 app.use("/api/post", questionRoutes, answerRoutes);
 app.use("/api/class", classRoutes);
 

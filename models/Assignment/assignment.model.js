@@ -12,10 +12,6 @@ exports.Assignment = sequelize.define(
       type: DataTypes.STRING(90),
       allowNull: false,
     },
-    createdBy: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     dueDate: {
       type: DataTypes.STRING(10),
       allowNull: false,

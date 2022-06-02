@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  elasticsearch: 
+    image: elasticsearch:8.2.2
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+    - xpack.security.enabled=false
+    - "discovery.type=single-node"
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - http.cors.enabled=true
+    - http.cors.allow-origin="*"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    env_file:
+    - postgres.dev.env

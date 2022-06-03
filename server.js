@@ -1,9 +1,11 @@
 const express = require("express");
-const multer = require("multer");
 const path = require("path");
 const client = require("./config/elastic");
 
-const { storage } = require("./middlewares/upload.middleware");
+const {
+  profileUpload,
+  assignmentUpload,
+} = require("./middlewares/upload.middleware");
 
 // db models
 const sequelize = require("./config/db");
@@ -25,24 +27,16 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// configuration for multer
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, `public`);
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `attachments/assignment-${file.originalname}.${ext}`);
-  },
-});
-
-const upload = multer({ storage: multerStorage });
 //Routes
-app.use("/api/auth", upload.single("profile"), authRoutes);
-app.use("/api/user", upload.single("profile"), userRoutes);
-app.use("/api/assignment", upload.single("attachment"), assignmentRoutes);
+app.use("/api/auth", profileUpload.single("profile"), authRoutes);
+app.use("/api/user", profileUpload.single("profile"), userRoutes);
+app.use(
+  "/api/assignment",
+  assignmentUpload.single("attachment"),
+  assignmentRoutes
+);
 app.use("/api/post", questionRoutes, answerRoutes);
-app.use("/api/class", upload.single("studentsData"), classRoutes);
+app.use("/api/class", classRoutes);
 
 //Server connection
 const port = process.env.PORT || 8000;

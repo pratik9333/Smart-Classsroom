@@ -13,12 +13,6 @@ exports.createClass = async (req, res) => {
 
     const user = await User.findByPk(req.userId);
 
-    if (!user || user.role !== "teacher") {
-      return res
-        .status(403)
-        .json({ error: "You are not allowded to access this resource" });
-    }
-
     const createdClass = await user.createClass({
       name: classname,
       section: classsection,
@@ -40,12 +34,7 @@ exports.removeUserFromClass = async (req, res) => {
         .json({ error: "Please provide class code and userID" });
     }
 
-    const loggedUser = await User.findByPk(req.userId);
     const removeUser = await User.findByPk(userId);
-
-    if (loggedUser.role !== "teacher") {
-      return res.status(400).json({ error: "Unauthorized access" });
-    }
 
     if (removeUser.role === "teacher") {
       return res
@@ -54,6 +43,8 @@ exports.removeUserFromClass = async (req, res) => {
     }
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
+
+    // TODO: check if user belongs to the this class
 
     // removing user created responses
     await removeUser.removeResponses();
@@ -73,12 +64,6 @@ exports.removeClass = async (req, res) => {
 
     if (!classCode) {
       return res.status(400).json({ error: "Please provide class code" });
-    }
-
-    const loggedUser = await User.findByPk(req.userId);
-
-    if (loggedUser.role !== "teacher") {
-      return res.status(400).json({ error: "Unauthorized access" });
     }
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
@@ -127,58 +112,3 @@ exports.getClassDetails = async (req, res) => {
   }
 };
 
-/* add bulking student feature deleted 
-exports.addBulkStudent = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.userId);
-
-    if (!user || user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ error: "You are not allowded to access this resource" });
-    }
-
-    const { classId, xlsMapping } = req.body;
-
-    const path = `/public/student/${classId}.xlsx`;
-
-    const users = [];
-
-    const receivers = [];
-
-    await readXlsxFile(
-      fs.createReadStream(path),
-      { xlsMapping },
-      async (eachUser) => {
-        const newUser = await User.create({ ...eachUser, password: uuidV4() });
-        users.push(newUser);
-        receivers.push({
-          email: eachUser.email,
-          password: uuidV4(),
-          fullName: eachUser.fullName,
-        });
-      }
-    );
-
-    const getClass = await Class.findByPk(classid);
-
-    await getClass.addUsers(users);
-
-    // send email to users
-    const emailPromises = await Promise.all(
-      sendMail("senderName", "senderEmail", "senderPass", receivers, "", {
-        user,
-      })
-    );
-    console.log(emailPromises);
-
-    return res
-      .status(200)
-      .json({ success: true, message: "User created successfully." });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Error while creating user" });
-  }
-};
-
-*/

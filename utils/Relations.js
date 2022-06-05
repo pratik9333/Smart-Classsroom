@@ -46,7 +46,4 @@ exports.Relations = () => {
   AssignmentResponse.belongsTo(User);
   User.hasMany(AssignmentResponse);
   
-  // 1:M Assignment and user
-  User.belongsTo(Assignment);
-  Assignment.hasMany(User);
 };

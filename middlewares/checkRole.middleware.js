@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 
-exports.checkTeacherRole = (req, res) => {
+exports.checkTeacherRole = async (req, res,next) => {
     const loggedUser = await User.findByPk(req.userId);
 
     if (loggedUser.role !== "teacher") {
@@ -8,9 +8,10 @@ exports.checkTeacherRole = (req, res) => {
         .status(400)
         .json({ error: "Unauthorized access" });
     }
+    next();
 };
 
-exports.checkAdminRole = (req, res) => {
+exports.checkAdminRole = async (req, res,next) => {
     const loggedUser = await User.findByPk(req.userId);
 
     if (loggedUser.role !== "admin") {
@@ -18,4 +19,5 @@ exports.checkAdminRole = (req, res) => {
         .status(400)
         .json({ error: "Unauthorized access" });
     }
+    next();
 };

@@ -22,7 +22,7 @@ exports.createAssignment = async (req, res) => {
         .json({ error: "Invalid classcode or class does not exists anymore" });
     }
 
-    req.body.req.body.points = parseInt(req.body.points);
+    req.body.points = Number(req.body.points??0);
 
     if (req.file) {
       req.body.attachments =
@@ -33,7 +33,7 @@ exports.createAssignment = async (req, res) => {
 
     // setting up class relation with assignment
     await cls.addAssignment(createdAssignment);
-
+    createdAssignment.classId = cls.id;
     res.status(200).json({
       message: `Assignment of ${req.body.subjectName} was created`,
       createdAssignment,
@@ -175,7 +175,8 @@ exports.getClassAssignments = async (req, res) => {
 
 // Private functions
 
-_findAssignment = (loggedUser,assignmentID) => {
+//TODO: loggerUser.hasAssignment(assignment)
+_findAssignment = async (loggedUser,assignmentID) => {
   const userCreatedAssignments = await loggedUser.getAssignments();
   for (let assign of userCreatedAssignments) {
     if (assign.id == assignmentID) {
@@ -190,7 +191,7 @@ _deleteFileIfExists = (req, assignment) => {
     // checking if existing assignment has attachments
     if (assignment.attachments) {
       const assignmentFileName = assignment.attachments.split("/")[5];
-      let path = `./public/attachments/${assignmentFileName}`;
+      let path = `./public/attachments/assignments/${assignmentFileName}`;
 
       if (req.file.filename.split("/")[1] !== assignmentFileName) {
         if (fs.existsSync(path)) {

@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 
-exports.checkTeacherRole = (req, res) => {
+exports.checkTeacherRole = async (req, res) => {
     const loggedUser = await User.findByPk(req.userId);
 
     if (loggedUser.role !== "teacher") {
@@ -10,7 +10,7 @@ exports.checkTeacherRole = (req, res) => {
     }
 };
 
-exports.checkAdminRole = (req, res) => {
+exports.checkAdminRole = async (req, res) => {
     const loggedUser = await User.findByPk(req.userId);
 
     if (loggedUser.role !== "admin") {

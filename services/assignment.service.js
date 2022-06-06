@@ -175,7 +175,7 @@ exports.getClassAssignments = async (req, res) => {
 
 // Private functions
 
-_findAssignment = (loggedUser,assignmentID) => {
+_findAssignment = async (loggedUser,assignmentID) => {
   const userCreatedAssignments = await loggedUser.getAssignments();
   for (let assign of userCreatedAssignments) {
     if (assign.id == assignmentID) {

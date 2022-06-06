@@ -22,7 +22,7 @@ exports.createAssignment = async (req, res) => {
         .json({ error: "Invalid classcode or class does not exists anymore" });
     }
 
-    req.body.points = Number(req.body.points??0);
+    req.body.points = Number(req.body.points ?? 0);
 
     if (req.file) {
       req.body.attachments =
@@ -172,11 +172,10 @@ exports.getClassAssignments = async (req, res) => {
   }
 };
 
-
 // Private functions
-
 //TODO: loggerUser.hasAssignment(assignment)
-_findAssignment = async (loggedUser,assignmentID) => {
+
+_findAssignment = async (loggedUser, assignmentID) => {
   const userCreatedAssignments = await loggedUser.getAssignments();
   for (let assign of userCreatedAssignments) {
     if (assign.id == assignmentID) {
@@ -184,7 +183,7 @@ _findAssignment = async (loggedUser,assignmentID) => {
     }
   }
   return false;
-}
+};
 
 _deleteFileIfExists = (req, assignment) => {
   if (req.file) {

@@ -12,6 +12,7 @@ exports.signup = (req, res) => {
       error: errors.array()[0].msg,
     });
   }
+
   if (req.file) req.body.profile = req.file.path;
 
   User.create(req.body)

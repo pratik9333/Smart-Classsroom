@@ -141,7 +141,7 @@ exports.joinClass = async (req, res) => {
 
     const loggedUser = await User.findByPk(req.userId);
 
-    const classMembers = await Class.getUsers();
+    const classMembers = await getClass.getUsers();
 
     for (let member of classMembers) {
       if (member.id === loggedUser.id) {
@@ -155,6 +155,7 @@ exports.joinClass = async (req, res) => {
 
     return res.status(200).json({ success: true, message: "User added" });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: "Error while adding user" });
   }
 };

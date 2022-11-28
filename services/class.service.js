@@ -4,6 +4,7 @@ const User = require("../models/user.model");
 exports.createClass = async (req, res) => {
   try {
     const { classname, classsection } = req.body;
+    console.log(req.body);
 
     if (!classname || !classsection) {
       return res

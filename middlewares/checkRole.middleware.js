@@ -14,6 +14,5 @@ exports.checkAdminRole = async (req, res, next) => {
   if (loggedUser.role !== "admin") {
     return res.status(400).json({ error: "Unauthorized access" });
   }
-
   next();
 };

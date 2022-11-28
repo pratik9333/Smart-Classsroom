@@ -28,7 +28,7 @@ exports.Assignment = sequelize.define(
   { timestamps: true }
 );
 
-exports.Response = sequelize.define(
+exports.AssignmentResponse = sequelize.define(
   "response",
   {
     description: {
@@ -37,7 +37,7 @@ exports.Response = sequelize.define(
     },
     attachments: {
       type: DataTypes.STRING(10000),
-      allowNull: false,
+      allowNull: true,
     },
   },
   { timestamps: true }

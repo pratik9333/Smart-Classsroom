@@ -39,3 +39,4 @@ const uploadStorageHandlers = {
 // multer upload 
 exports.profileUpload = multer({ storage: uploadStorageHandlers.profileStorage });
 exports.assignmentUpload = multer({ storage: uploadStorageHandlers.assignmentStorage });
+exports.responseUpload = multer({ storage: uploadStorageHandlers.responseStorage });

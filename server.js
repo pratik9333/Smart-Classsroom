@@ -52,7 +52,7 @@ sequelize.sync().then((result) => {
       app.listen(port, () => {
         console.log(`app is runnning at ${port}`);
       });
-      console.log(response);
+      //console.log(response);
     })
     .catch((error) => console.error(error));
 });

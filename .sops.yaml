@@ -1,7 +1,0 @@
-creation_rules:
-  - path_regex: '.env'
-    pgp: >-
-      AF7252FDD8853A711CC2DF177CCB945470525886
-  - path_regex: 'default.json'
-    pgp: >-
-      AF7252FDD8853A711CC2DF177CCB945470525886

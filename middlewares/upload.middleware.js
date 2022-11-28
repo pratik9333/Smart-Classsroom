@@ -22,13 +22,13 @@ const uploadStorageHandlers = {
   profileStorage: storage('images',
     (file) => file.fieldname + "-" + Date.now() + path.extname(file.originalname)),
 
-  assignmentStorage: storage('assignments',
+  assignmentStorage: storage('attachments/assignments',
     (file) => {
       const ext = file.mimetype.split("/")[1];
       return `assignment-${file.originalname}.${ext}`
     }),
 
-  responseStorage: storage('responses',
+  responseStorage: storage('attachments/responses',
     (file) => {
       const ext = file.mimetype.split("/")[1];
       return `response-${file.originalname}.${ext}`

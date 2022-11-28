@@ -22,7 +22,7 @@ exports.createAssignment = async (req, res) => {
         .json({ error: "Invalid classcode or class does not exists anymore" });
     }
 
-    req.body.req.body.points = parseInt(req.body.points);
+    req.body.points = parseInt(req.body.points);
 
     if (req.file) {
       req.body.attachments =
@@ -33,7 +33,7 @@ exports.createAssignment = async (req, res) => {
 
     // setting up class relation with assignment
     await cls.addAssignment(createdAssignment);
-
+    createdAssignment.classId = cls.id;
     res.status(200).json({
       message: `Assignment of ${req.body.subjectName} was created`,
       createdAssignment,
@@ -49,21 +49,18 @@ exports.updateAssignment = async (req, res) => {
     const { assignmentId, classId } = req.params;
     const { subjectName, description, dueDate } = req.body;
 
-    if (!assignmentId || !classId) {
-      return res
-        .status(400)
-        .json({ error: "Please provide assignment and class ID" });
-    }
+    const assignment = await Assignment.findByPk(assignmentId);
+    const loggedUser = await User.findByPk(req.userId);
+    const cls = await Class.findOne({
+      where: { classCode: classId },
+      raw: false,
+    });
 
     if (!subjectName || !description || !dueDate) {
       return res.status(400).json({ error: "Please provide all the fields" });
     }
 
-    const assignment = await Assignment.findByPk(assignmentId);
-    const loggedUser = await User.findByPk(req.userId);
-    const cls = await Class.findOne({ where: { classCode: classId } });
-
-    if (cls.length === 0) {
+    if (!cls) {
       return res
         .status(400)
         .json({ error: "Invalid class Id or class does not exists anymore" });
@@ -73,7 +70,8 @@ exports.updateAssignment = async (req, res) => {
       return res.status(400).json({ error: "Assignment does not exists" });
     }
 
-    const result = await _findAssignment(loggedUser, assignmentId);
+    const result = await _findAssignment(assignment, req.userId);
+
     if (!result) {
       return res.status(400).json({
         error: `This assignment does not belong to ${loggedUser.fullname}`,
@@ -106,27 +104,32 @@ exports.deleteAssignment = async (req, res) => {
   try {
     const { assignmentId, classId } = req.params;
 
+    const assignment = await Assignment.findByPk(assignmentId);
+    const loggedUser = await User.findByPk(req.userId);
+    const cls = await Class.findOne({ where: { classCode: classId } });
+
+    const Users = await assignment.getUser();
+
+    console.log(Users);
+
     if (!assignmentId || !classId) {
       return res
         .status(400)
         .json({ error: "Please provide assignment and class ID" });
     }
 
-    const assignment = await Assignment.findByPk(assignmentId);
-    const loggedUser = await User.findByPk(req.userId);
-    const cls = await Class.findOne({ where: { classCode: classId } });
-
     if (!assignment) {
       return res.status(400).json({ error: "Assignment does not exists" });
     }
 
-    if (cls.length === 0) {
+    if (!cls) {
       return res
         .status(400)
         .json({ error: "Invalid class Id or class does not exists anymore" });
     }
 
-    const result = await _findAssignment(loggedUser, assignmentId);
+    const result = await _findAssignment(assignment, req.userId);
+
     if (!result) {
       return res.status(400).json({
         error: `This assignment does not belong to ${loggedUser.fullname}`,
@@ -158,7 +161,7 @@ exports.getClassAssignments = async (req, res) => {
 
     const cls = await Class.findOne({ where: { classCode: classId } });
 
-    if (cls.length === 0) {
+    if (!cls) {
       return res
         .status(400)
         .json({ error: "Invalid class code or class does not exists" });
@@ -168,29 +171,29 @@ exports.getClassAssignments = async (req, res) => {
 
     return res.status(200).json({ success: true, clsAssignments });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "unable to fetch assignments" });
   }
 };
 
-
 // Private functions
+_findAssignment = async (assignment, userId) => {
+  const Users = await assignment.getUsers();
 
-_findAssignment = async (loggedUser,assignmentID) => {
-  const userCreatedAssignments = await loggedUser.getAssignments();
-  for (let assign of userCreatedAssignments) {
-    if (assign.id == assignmentID) {
+  for (let user of Users) {
+    if (user.id == userId) {
       return true;
     }
   }
   return false;
-}
+};
 
 _deleteFileIfExists = (req, assignment) => {
   if (req.file) {
     // checking if existing assignment has attachments
     if (assignment.attachments) {
       const assignmentFileName = assignment.attachments.split("/")[5];
-      let path = `./public/attachments/${assignmentFileName}`;
+      let path = `./public/attachments/assignments/${assignmentFileName}`;
 
       if (req.file.filename.split("/")[1] !== assignmentFileName) {
         if (fs.existsSync(path)) {
@@ -201,36 +204,3 @@ _deleteFileIfExists = (req, assignment) => {
     }
   }
 };
-
-// ***JUNK CODE***
-
-// reading all files from our attachments directory
-// fs.readdir(path, (err, files) => {
-//   if (err) throw err;
-
-//   // looping through all files from directory
-//   files.forEach((file) => {
-//     if (file === assignmentFileName) {
-//       fs.unlinkSync(path + file); // deleting file if filename matches
-//     }
-//   });
-// });
-
-// if (assignment.attachments) {
-//   let path = "./public/attachments/";
-
-//   // getting attachment file name
-//   const assignmentFileName = assignment.attachments.split("/")[5];
-
-//   // reading all files from our attachments directory
-//   fs.readdir(path, (err, files) => {
-//     if (err) throw err;
-
-//     // looping through all files from directory
-//     files.forEach((file) => {
-//       if (file === assignmentFileName) {
-//         fs.unlinkSync(path + file); // deleting file if filename matches
-//       }
-//     });
-//   });
-// }

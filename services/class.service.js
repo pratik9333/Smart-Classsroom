@@ -4,6 +4,7 @@ const User = require("../models/user.model");
 exports.createClass = async (req, res) => {
   try {
     const { classname, classsection } = req.body;
+    console.log(req.body);
 
     if (!classname || !classsection) {
       return res
@@ -34,6 +35,7 @@ exports.removeUserFromClass = async (req, res) => {
         .json({ error: "Please provide class code and userID" });
     }
 
+    const loggedUser = await User.findByPk(req.userId);
     const removeUser = await User.findByPk(userId);
 
     if (removeUser.role === "teacher") {
@@ -44,7 +46,15 @@ exports.removeUserFromClass = async (req, res) => {
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
 
-    // TODO: check if user belongs to the this class
+    // check if class users belongs to the this class
+    const UserClass = await removeUser.getClass().name;
+    const teacherClass = await loggedUser.getClass().name;
+
+    if (UserClass !== cls.name || teacherClass !== cls.name) {
+      return res.status(400).json({
+        error: `You or ${removeUser.fullname} does not belong to this class`,
+      });
+    }
 
     // removing user created responses
     await removeUser.removeResponses();
@@ -67,6 +77,16 @@ exports.removeClass = async (req, res) => {
     }
 
     const cls = await Class.findOne({ where: { classCode: classCode } });
+    const loggedUser = await User.findByPk(req.userId);
+
+    const teacherClass = await loggedUser.getClass().name;
+
+    // check if class teacher belongs to the this class
+    if (teacherClass !== cls.name) {
+      return res.status(400).json({
+        error: `${loggedUser.fullname} does not belong to this class`,
+      });
+    }
 
     const assignments = await cls.getAssignments();
 
@@ -81,7 +101,7 @@ exports.removeClass = async (req, res) => {
     // removing class
     await cls.destroy();
 
-    return res.status(500).json({ success: "Class was deleted" });
+    return res.status(500).json({ success: `Class ${cls.name} was removed` });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Error while removing class" });
@@ -111,4 +131,3 @@ exports.getClassDetails = async (req, res) => {
     return res.status(500).json({ error: "Error while getting class members" });
   }
 };
-
